@@ -1,7 +1,7 @@
 // ==================== UPDATED SCRIPT FOR index.html ====================
 // Replace the existing script content with this
 
-const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwxzOC_5-4HmK9XaiMH2p0TuE_9RAi9g1SL4Y23trM_nE-l2wtJ8ELhJNWhJ4QS3Yvi/exec"; // Update this with your Apps Script URL
+const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwLAgiq__p8mnhu5GGs6jf8BDbKPDs5tjl00RBegsU-JEdlrSV8kIzXg7SYMlxkv15RXQ/exec"; // Update this with your Apps Script URL
 
 // Generate unique order ID
 function generateOrderId() {
