@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTM SHOP | Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .login-container h2 {
+            color: #386f6e;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: #386f6e;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .remember-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .remember-row input {
+            width: auto;
+            margin: 0;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .remember-row label {
+            color: #386f6e;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #386f6e 0%, #2c5958 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logout-btn {
+            background: #ffb84d;
+            color: #2c3e3e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #386f6e;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #386f6e;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-primary {
+            background: #386f6e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-warning {
+            background: #ffb84d;
+            color: #2c3e3e;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .products-table {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f5faf9;
+            color: #386f6e;
+        }
+
+        .product-img-preview {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #386f6e;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+            animation: fadeInOut 3s ease;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+
+        .image-url-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .add-product-card {
+            background: #f5faf9;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Login Page -->
+<div id="loginPage" class="login-container">
+    <h2>🔐 Admin Login</h2>
+    <input type="password" id="adminPassword" placeholder="Enter Password">
+    <div class="remember-row">
+        <input type="checkbox" id="rememberPassword">
+        <label for="rememberPassword">Remember Password</label>
+    </div>
+    <button onclick="checkLogin()">Login</button>
+</div>
+
+<!-- Admin Dashboard -->
+<div id="adminPanel" class="admin-container">
+    <div class="admin-header">
+        <div>
+            <h2>🛍️ TTM SHOP Admin Panel</h2>
+            <p>Manage all website content from here</p>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('products')">📦 Manage Products</button>
+        <button class="tab-btn" onclick="showTab('hero')">🎨 Hero Section</button>
+        <button class="tab-btn" onclick="showTab('contact')">📞 Contact Settings</button>
+        <button class="tab-btn" onclick="showTab('footer')">📋 Footer Settings</button>
+        <button class="tab-btn" onclick="showTab('backup')">💾 Backup & Restore</button>
+    </div>
+
+    <!-- Products Tab -->
+    <div id="productsTab" class="tab-content active">
+        <div class="add-product-card">
+            <h3 style="margin-bottom: 15px;">➕ Add New Product</h3>
+            <div class="form-group">
+                <label>Product Title:</label>
+                <input type="text" id="newTitle" placeholder="e.g., Full Stack Developer">
+            </div>
+            <div class="form-group">
+                <label>Short Description:</label>
+                <input type="text" id="newShortDesc" placeholder="e.g., Smart Watch">
+            </div>
+            <div class="form-group">
+                <label>Detailed Description:</label>
+                <textarea id="newLongDetails" placeholder="Write detailed product description"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Current Price (৳):</label>
+                <input type="number" id="newPrice" placeholder="e.g., 990">
+            </div>
+            <div class="form-group">
+                <label>Regular Price (৳):</label>
+                <input type="number" id="newRegularPrice" placeholder="e.g., 12000">
+            </div>
+            <div class="form-group">
+                <label>Image URL:</label>
+                <input type="text" id="newImageUrl" placeholder="https://...">
+                <div class="image-url-hint">💡 Provide image URL to show image, otherwise icon will be displayed</div>
+            </div>
+            <div class="form-group">
+                <label>Product Type:</label>
+                <select id="newProductType">
+                    <option value="bestSelling">Best Selling</option>
+                    <option value="all">All Products</option>
+                </select>
+            </div>
+            <button class="btn-primary" onclick="addProduct()">➕ Add Product</button>
+        </div>
+
+        <h3 style="margin: 20px 0 10px;">⭐ Best Selling Products</h3>
+        <div class="products-table">
+            <table id="bestSellingTable">
+                <thead>
+                    <tr><th>Image</th><th>Title</th><th>Price</th><th>Discount</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="bestSellingList"></tbody>
+            </table>
+        </div>
+
+        <h3 style="margin: 20px 0 10px;">📦 All Products</h3>
+        <div class="products-table">
+            <table id="allProductsTable">
+                <thead>
+                    <tr><th>Image</th><th>Title</th><th>Price</th><th>Discount</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="allProductsList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Hero Section Tab -->
+    <div id="heroTab" class="tab-content">
+        <div class="form-group">
+            <label>Hero Title:</label>
+            <input type="text" id="heroTitle" placeholder="TTM SHOP">
+        </div>
+        <div class="form-group">
+            <label>Hero Subtitle:</label>
+            <input type="text" id="heroSubtitle" placeholder="Premium Quality. Trusted Delivery">
+        </div>
+        <button class="btn-primary" onclick="updateHeroSection()">Update Hero Section</button>
+    </div>
+
+    <!-- Contact Settings Tab -->
+    <div id="contactTab" class="tab-content">
+        <div class="form-group">
+            <label>WhatsApp Number:</label>
+            <input type="text" id="whatsappNumber" placeholder="8801234567890">
+            <div class="image-url-hint">Enter only number, https://wa.me/ will be added automatically</div>
+        </div>
+        <div class="form-group">
+            <label>Messenger Username:</label>
+            <input type="text" id="messengerUsername" placeholder="yourpageusername">
+            <div class="image-url-hint">The part after https://m.me/</div>
+        </div>
+        <button class="btn-primary" onclick="updateContactSettings()">Update Contact Settings</button>
+    </div>
+
+    <!-- Footer Settings Tab -->
+    <div id="footerTab" class="tab-content">
+        <div class="form-group">
+            <label>Footer Copyright Text:</label>
+            <input type="text" id="copyrightText" placeholder="&copy; 2024 TTM SHOP. All rights reserved.">
+        </div>
+        <div class="form-group">
+            <label>Support Number:</label>
+            <input type="text" id="supportNumber" placeholder="+880123456789">
+        </div>
+        <button class="btn-primary" onclick="updateFooterSettings()">Update Footer</button>
+    </div>
+
+    <!-- Backup Tab -->
+    <div id="backupTab" class="tab-content">
+        <p>Backup all your data or restore from backup</p>
+        <button class="btn-primary" onclick="backupData()">💾 Download Backup</button>
+        <button class="btn-primary" onclick="resetToDefault()">🔄 Restore Default Data</button>
+        <div style="margin-top: 15px;">
+            <label>Restore from backup file:</label>
+            <input type="file" id="restoreFile" accept=".json">
+            <button class="btn-primary" onclick="restoreFromFile()">Restore Now</button>
+        </div>
+    </div>
+</div>
+
+<div id="message" class="message"></div>
+
+<script>
+    // ==================== Default Data ====================
+    let websiteData = {
+        heroTitle: "🛍️ TTM SHOP",
+        heroSubtitle: "Premium Quality. Trusted Delivery",
+        whatsappNumber: "8801234567890",
+        messengerUsername: "yourpageusername",
+        copyrightText: "© 2024 TTM SHOP. All rights reserved.",
+        supportNumber: "24/7 Support",
+        bestSellingProducts: [
+            { id: "bs1", title: "Full Stack Developer", shortDesc: "Smart Watch", longDetails: "6 months live projects, certificate, interview preparation, and job placement support.", price: 990, regularPrice: 12000, icon: "🚀", bgColor: "#e0f0ed", imageUrl: "https://www.startech.com.bd/image/cache/catalog/smart-watch/oraimo/watch-4-plus/oraimo-watch-4-plus-01-500x500.webp" },
+            { id: "bs2", title: "Digital Marketing", shortDesc: "SEO, Google Ads", longDetails: "Complete campaign optimization, content strategy, analytics, and practical case studies.", price: 3200, regularPrice: 8000, icon: "📢", bgColor: "#ffe0cc", imageUrl: "https://www.startech.com.bd/image/cache/catalog/smart-watch/oraimo/watch-5-lite/watch-5-lite-osw-804-black-500x500.webp" },
+            { id: "bs3", title: "Graphic Design Pro", shortDesc: "Photoshop, Illustrator", longDetails: "Logo design, banners, thumbnails, branding, and portfolio development.", price: 2800, regularPrice: 6000, icon: "🎨", bgColor: "#e3f0ff", imageUrl: "" }
+        ],
+        allProducts: [
+            { id: "p1", title: "Python Data Science", shortDesc: "Pandas, NumPy", longDetails: "Data cleaning, visualization, real datasets, and machine learning basics.", price: 3900, regularPrice: 8500, icon: "🐍", bgColor: "#f0f3e8", imageUrl: "" },
+            { id: "p2", title: "AI & Machine Learning", shortDesc: "TensorFlow, Scikit", longDetails: "Model building, image classification, neural networks, and hands-on projects.", price: 5200, regularPrice: 15000, icon: "🤖", bgColor: "#f8eef0", imageUrl: "" },
+            { id: "p3", title: "Web Design Foundation", shortDesc: "HTML, CSS, JS", longDetails: "Responsive design, flexbox, grid, animations, and portfolio website.", price: 1990, regularPrice: 4500, icon: "🎨", bgColor: "#eef5f5", imageUrl: "" },
+            { id: "p4", title: "Freelancing Handbook", shortDesc: "Upwork, Fiverr", longDetails: "Profile optimization, client acquisition, bidding strategies, and rating improvement.", price: 1500, regularPrice: 3500, icon: "💼", bgColor: "#fff0db", imageUrl: "" }
+        ]
+    };
+
+    // Admin password (You can change this)
+    const ADMIN_PASSWORD = "admin123";
+
+    // Load saved password from localStorage
+    function loadSavedPassword() {
+        const saved = localStorage.getItem("admin_saved_password");
+        if(saved) {
+            document.getElementById('adminPassword').value = saved;
+            document.getElementById('rememberPassword').checked = true;
+        }
+    }
+
+    // Save password if checkbox is checked
+    function savePasswordIfNeeded(password) {
+        if(document.getElementById('rememberPassword').checked) {
+            localStorage.setItem("admin_saved_password", password);
+            localStorage.setItem("remember_admin", "true");
+        } else {
+            localStorage.removeItem("admin_saved_password");
+            localStorage.removeItem("remember_admin");
+        }
+    }
+
+    // Load data from localStorage
+    function loadData() {
+        const saved = localStorage.getItem("ttm_website_data");
+        if(saved) {
+            websiteData = JSON.parse(saved);
+        } else {
+            saveData();
+        }
+        renderProductsTable();
+        loadSettingsToForm();
+    }
+
+    function saveData() {
+        localStorage.setItem("ttm_website_data", JSON.stringify(websiteData));
+    }
+
+    function renderProductsTable() {
+        // Best selling table
+        const bestTbody = document.getElementById('bestSellingList');
+        bestTbody.innerHTML = websiteData.bestSellingProducts.map((p, idx) => `
+            <tr>
+                <td>${p.imageUrl ? `<img src="${p.imageUrl}" class="product-img-preview" onerror="this.src=''">` : p.icon || '📦'}</td>
+                <td>${escapeHtml(p.title)}</td>
+                <td>${p.price} ৳</td>
+                <td>${p.regularPrice > p.price ? Math.round(((p.regularPrice - p.price) / p.regularPrice) * 100) + '%' : '-'}</td>
+                <td>
+                    <button class="btn-warning" onclick="editProduct('bestSelling', ${idx})">✏️ Edit</button>
+                    <button class="btn-danger" onclick="deleteProduct('bestSelling', ${idx})">🗑️ Delete</button>
+                </td>
+            </tr>
+        `).join('');
+
+        // All products table
+        const allTbody = document.getElementById('allProductsList');
+        allTbody.innerHTML = websiteData.allProducts.map((p, idx) => `
+            <tr>
+                <td>${p.imageUrl ? `<img src="${p.imageUrl}" class="product-img-preview" onerror="this.src=''">` : p.icon || '📦'}</td>
+                <td>${escapeHtml(p.title)}</td>
+                <td>${p.price} ৳</td>
+                <td>${p.regularPrice > p.price ? Math.round(((p.regularPrice - p.price) / p.regularPrice) * 100) + '%' : '-'}</td>
+                <td>
+                    <button class="btn-warning" onclick="editProduct('allProducts', ${idx})">✏️ Edit</button>
+                    <button class="btn-danger" onclick="deleteProduct('allProducts', ${idx})">🗑️ Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function loadSettingsToForm() {
+        document.getElementById('heroTitle').value = websiteData.heroTitle;
+        document.getElementById('heroSubtitle').value = websiteData.heroSubtitle;
+        document.getElementById('whatsappNumber').value = websiteData.whatsappNumber;
+        document.getElementById('messengerUsername').value = websiteData.messengerUsername;
+        document.getElementById('copyrightText').value = websiteData.copyrightText;
+        document.getElementById('supportNumber').value = websiteData.supportNumber;
+    }
+
+    function addProduct() {
+        const newProduct = {
+            id: Date.now().toString(),
+            title: document.getElementById('newTitle').value,
+            shortDesc: document.getElementById('newShortDesc').value,
+            longDetails: document.getElementById('newLongDetails').value,
+            price: parseInt(document.getElementById('newPrice').value),
+            regularPrice: parseInt(document.getElementById('newRegularPrice').value),
+            icon: "🛍️",
+            bgColor: "#f5faf9",
+            imageUrl: document.getElementById('newImageUrl').value
+        };
+
+        const type = document.getElementById('newProductType').value;
+        if(type === 'bestSelling') {
+            websiteData.bestSellingProducts.push(newProduct);
+        } else {
+            websiteData.allProducts.push(newProduct);
+        }
+
+        saveData();
+        renderProductsTable();
+        clearProductForm();
+        showMessage('✅ Product added successfully!');
+        syncToLiveSite();
+    }
+
+    function clearProductForm() {
+        document.getElementById('newTitle').value = '';
+        document.getElementById('newShortDesc').value = '';
+        document.getElementById('newLongDetails').value = '';
+        document.getElementById('newPrice').value = '';
+        document.getElementById('newRegularPrice').value = '';
+        document.getElementById('newImageUrl').value = '';
+    }
+
+    function editProduct(type, index) {
+        let product;
+        if(type === 'bestSelling') {
+            product = websiteData.bestSellingProducts[index];
+        } else {
+            product = websiteData.allProducts[index];
+        }
+        
+        const newTitle = prompt('Enter new title:', product.title);
+        if(newTitle) product.title = newTitle;
+        
+        const newPrice = prompt('Enter new price:', product.price);
+        if(newPrice) product.price = parseInt(newPrice);
+        
+        const newImageUrl = prompt('Enter image URL:', product.imageUrl);
+        if(newImageUrl !== null) product.imageUrl = newImageUrl;
+        
+        saveData();
+        renderProductsTable();
+        showMessage('✅ Product updated successfully!');
+        syncToLiveSite();
+    }
+
+    function deleteProduct(type, index) {
+        if(confirm('Are you sure you want to delete this product?')) {
+            if(type === 'bestSelling') {
+                websiteData.bestSellingProducts.splice(index, 1);
+            } else {
+                websiteData.allProducts.splice(index, 1);
+            }
+            saveData();
+            renderProductsTable();
+            showMessage('🗑️ Product deleted successfully!');
+            syncToLiveSite();
+        }
+    }
+
+    function updateHeroSection() {
+        websiteData.heroTitle = document.getElementById('heroTitle').value;
+        websiteData.heroSubtitle = document.getElementById('heroSubtitle').value;
+        saveData();
+        showMessage('✅ Hero section updated successfully!');
+        syncToLiveSite();
+    }
+
+    function updateContactSettings() {
+        websiteData.whatsappNumber = document.getElementById('whatsappNumber').value;
+        websiteData.messengerUsername = document.getElementById('messengerUsername').value;
+        saveData();
+        showMessage('✅ Contact settings updated successfully!');
+        syncToLiveSite();
+    }
+
+    function updateFooterSettings() {
+        websiteData.copyrightText = document.getElementById('copyrightText').value;
+        websiteData.supportNumber = document.getElementById('supportNumber').value;
+        saveData();
+        showMessage('✅ Footer updated successfully!');
+        syncToLiveSite();
+    }
+
+    function backupData() {
+        const dataStr = JSON.stringify(websiteData, null, 2);
+        const blob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ttm_shop_backup_${new Date().toISOString().slice(0,19)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showMessage('💾 Backup download started!');
+    }
+
+    function resetToDefault() {
+        if(confirm('⚠️ All data will be reset to default! Are you sure?')) {
+            location.reload();
+        }
+    }
+
+    function restoreFromFile() {
+        const fileInput = document.getElementById('restoreFile');
+        const file = fileInput.files[0];
+        if(!file) {
+            showMessage('Please select a backup file');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const restored = JSON.parse(e.target.result);
+                websiteData = restored;
+                saveData();
+                renderProductsTable();
+                loadSettingsToForm();
+                showMessage('✅ Data restored successfully!');
+                syncToLiveSite();
+            } catch(err) {
+                showMessage('❌ Invalid file!');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function syncToLiveSite() {
+        localStorage.setItem("ttm_live_website_data", JSON.stringify(websiteData));
+        showMessage('🌐 Data saved for live website! Changes will appear on refresh');
+    }
+
+    function escapeHtml(str) {
+        if(!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function showMessage(msg) {
+        const msgDiv = document.getElementById('message');
+        msgDiv.textContent = msg;
+        msgDiv.classList.add('show');
+        setTimeout(() => {
+            msgDiv.classList.remove('show');
+        }, 3000);
+    }
+
+    function showTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        
+        document.getElementById(`${tabName}Tab`).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function checkLogin() {
+        const password = document.getElementById('adminPassword').value;
+        if(password === ADMIN_PASSWORD) {
+            savePasswordIfNeeded(password);
+            sessionStorage.setItem('admin_logged_in', 'true');
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadData();
+        } else {
+            showMessage('❌ Wrong password!');
+        }
+    }
+
+    function logout() {
+        sessionStorage.removeItem('admin_logged_in');
+        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('adminPassword').value = '';
+    }
+
+    // Check if already logged in
+    window.onload = () => {
+        loadSavedPassword();
+        const loggedIn = sessionStorage.getItem('admin_logged_in');
+        if(loggedIn === 'true') {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadData();
+        }
+    };
+</script>
+</body>
+</html>
