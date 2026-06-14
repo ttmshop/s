@@ -1,189 +1,114 @@
-// ==================== UPDATED SCRIPT FOR index.html ====================
-// Replace the existing script content with this
+// ==================== Google Sheets Connector JavaScript File ====================
+// Upload this file to your GitHub and use the raw URL in your index.html
 
-const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwLAgiq__p8mnhu5GGs6jf8BDbKPDs5tjl00RBegsU-JEdlrSV8kIzXg7SYMlxkv15RXQ/exec"; // Update this with your Apps Script URL
+const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwLAgiq__p8mnhu5GGs6jf8BDbKPDs5tjl00RBegsU-JEdlrSV8kIzXg7SYMlxkv15RXQ/exec";
 
 // Generate unique order ID
 function generateOrderId() {
     return 'ORD-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6).toUpperCase();
 }
 
-// Enhanced function to send order to Google Sheets
-async function sendToGoogleSheets(orderData) {
+// Format products data for Google Sheets
+function formatProductsData(products) {
+    if (!products || products.length === 0) return "";
+    return products.map(p => `${p.title} (${p.quantity || 1}x) : ৳${p.price}`).join(" | ");
+}
+
+// Main function to send order to Google Sheets
+async function sendOrderToGoogleSheets(orderData) {
     try {
-        // Add order ID and metadata
-        orderData.orderId = generateOrderId();
-        orderData.timestamp = new Date().toISOString();
+        const payload = {
+            timestamp: new Date().toISOString(),
+            orderId: generateOrderId(),
+            orderType: orderData.orderType || "Single Product",
+            name: orderData.name || "",
+            phone: orderData.phone || "",
+            address: orderData.address || "",
+            products: JSON.stringify(orderData.products || []),
+            totalAmount: orderData.totalAmount || 0,
+            deliveryCharge: orderData.deliveryCharge || 0,
+            comment: orderData.comment || ""
+        };
         
         const response = await fetch(GOOGLE_SHEETS_WEBHOOK_URL, { 
             method: 'POST', 
             mode: 'no-cors', 
             headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify(orderData) 
+            body: JSON.stringify(payload) 
         });
         
-        // Store order in local backup
-        saveOrderToLocalBackup(orderData);
+        // Save to local backup
+        saveOrderToLocalBackup(payload);
         
-        return true;
+        return { success: true, orderId: payload.orderId };
     } catch (error) {
-        console.error("Error:", error);
-        // Store failed orders in local storage to retry later
+        console.error("Error sending order:", error);
         saveFailedOrder(orderData);
-        return false;
+        return { success: false, error: error.message };
     }
 }
 
 // Save order to local backup
 function saveOrderToLocalBackup(orderData) {
     let orders = JSON.parse(localStorage.getItem("ttm_orders_backup") || "[]");
-    orders.push(orderData);
+    orders.push({
+        ...orderData,
+        localSaveTime: new Date().toISOString()
+    });
     localStorage.setItem("ttm_orders_backup", JSON.stringify(orders));
 }
 
 // Save failed order for retry
 function saveFailedOrder(orderData) {
     let failedOrders = JSON.parse(localStorage.getItem("ttm_failed_orders") || "[]");
-    failedOrders.push(orderData);
+    failedOrders.push({
+        ...orderData,
+        failedAt: new Date().toISOString()
+    });
     localStorage.setItem("ttm_failed_orders", JSON.stringify(failedOrders));
 }
 
 // Retry failed orders
 async function retryFailedOrders() {
     let failedOrders = JSON.parse(localStorage.getItem("ttm_failed_orders") || "[]");
+    let stillFailed = [];
+    
     for (let order of failedOrders) {
         try {
-            await sendToGoogleSheets(order);
+            const result = await sendOrderToGoogleSheets(order);
+            if (!result.success) {
+                stillFailed.push(order);
+            }
         } catch(e) {
-            console.error("Retry failed for order:", order);
+            stillFailed.push(order);
         }
     }
-    localStorage.setItem("ttm_failed_orders", "[]");
+    
+    localStorage.setItem("ttm_failed_orders", JSON.stringify(stillFailed));
+    
+    if (stillFailed.length === 0) {
+        console.log("All failed orders have been retried successfully!");
+    }
 }
 
-// View orders from local backup (for debugging)
-function viewLocalOrders() {
-    const orders = JSON.parse(localStorage.getItem("ttm_orders_backup") || "[]");
-    console.table(orders);
-    return orders;
-}
-
-// Get today's order summary
+// Get today's orders from local backup
 function getTodayOrders() {
     const orders = JSON.parse(localStorage.getItem("ttm_orders_backup") || "[]");
     const today = new Date().toDateString();
     return orders.filter(order => new Date(order.timestamp).toDateString() === today);
 }
 
-// Enhanced order confirmation in modal
-// Replace the modalConfirmOrder onclick handler in your openProductModal function:
+// Get all orders from local backup
+function getAllOrders() {
+    return JSON.parse(localStorage.getItem("ttm_orders_backup") || "[]");
+}
 
-modalDiv.querySelector('#modalConfirmOrder').onclick = async () => {
-    let name = modalDiv.querySelector('#modalName').value;
-    let phone = modalDiv.querySelector('#modalPhone').value;
-    let address = modalDiv.querySelector('#modalAddress').value;
-    let comment = modalDiv.querySelector('#modalComment').value;
-    
-    if(!name || !phone || !address) { 
-        showToast("Please fill Name, Phone & Address"); 
-        return; 
-    }
-    
-    let deliveryCharge = getDeliveryCharge(address);
-    let total = product.price + deliveryCharge;
-    
-    const orderData = {
-        orderType: "Single Product",
-        name: name,
-        phone: phone,
-        address: address,
-        comment: comment,
-        deliveryCharge: deliveryCharge,
-        products: JSON.stringify([{ 
-            title: product.title, 
-            price: product.price, 
-            quantity: 1,
-            imageUrl: product.imageUrl || ''
-        }]),
-        totalAmount: total
-    };
-    
-    await saveOrderToSheet(orderData.orderType, 
-        { name, phone, address, comment, deliveryCharge }, 
-        [{ title: product.title, price: product.price, quantity: 1 }], 
-        total
-    );
-    
-    showToast(`✅ Order confirmed! Order ID: ${orderData.orderId || 'pending'} Total: ${total} ৳`);
-    closeModal();
-};
-
-// Update the cart confirmation handler
-document.getElementById('confirmCartFinal').onclick = async () => {
-    if(cart.length === 0) { 
-        showToast("Cart is empty"); 
-        return; 
-    }
-    
-    let name = document.getElementById('cartName').value;
-    let phone = document.getElementById('cartPhone').value;
-    let address = document.getElementById('cartAddress').value;
-    let comment = document.getElementById('cartMsg').value;
-    
-    if(!name || !phone || !address) { 
-        showToast("Please fill Name, Phone & Address"); 
-        return; 
-    }
-    
-    let subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-    let deliveryCharge = getDeliveryCharge(address);
-    let grandTotal = subtotal + deliveryCharge;
-    
-    const orderData = {
-        orderType: "Multiple Products (Cart)",
-        name: name,
-        phone: phone,
-        address: address,
-        comment: comment,
-        deliveryCharge: deliveryCharge,
-        products: JSON.stringify(cart.map(item => ({ 
-            title: item.title, 
-            price: item.price, 
-            quantity: item.quantity,
-            imageUrl: item.imageUrl || ''
-        }))),
-        totalAmount: grandTotal
-    };
-    
-    await saveOrderToSheet("Multiple Products (Cart)", 
-        { name, phone, address, comment, deliveryCharge }, 
-        cart.map(item => ({ title: item.title, price: item.price, quantity: item.quantity })), 
-        grandTotal
-    );
-    
-    showToast(`✅ Order confirmed! Order ID: ${orderData.orderId || 'pending'} Total: ${grandTotal} ৳`);
-    cart = [];
-    saveCart();
-    document.getElementById('cartPanel').classList.remove('open');
-};
-
-// Update the saveOrderToSheet function
-async function saveOrderToSheet(orderType, customerData, products, total) { 
-    const orderData = {
-        orderType: orderType,
-        name: customerData.name,
-        phone: customerData.phone,
-        address: customerData.address,
-        comment: customerData.comment || "",
-        deliveryCharge: customerData.deliveryCharge,
-        products: JSON.stringify(products),
-        totalAmount: total
-    };
-    
-    await sendToGoogleSheets(orderData);
+// Clear local backup (after successful sync)
+function clearLocalBackup() {
+    localStorage.removeItem("ttm_orders_backup");
+    showToast("Local backup cleared");
 }
 
 // Retry failed orders every hour
@@ -191,7 +116,16 @@ setInterval(() => {
     retryFailedOrders();
 }, 3600000);
 
-// On page load, try to send any failed orders
+// Retry on page load
 window.addEventListener('load', () => {
     retryFailedOrders();
 });
+
+// Export functions for use in main website
+window.TTMShop = {
+    sendOrder: sendOrderToGoogleSheets,
+    getTodayOrders: getTodayOrders,
+    getAllOrders: getAllOrders,
+    retryFailed: retryFailedOrders,
+    clearBackup: clearLocalBackup
+};
