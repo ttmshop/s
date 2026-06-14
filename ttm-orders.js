@@ -1,5 +1,5 @@
 // TTM Shop - Google Sheets Connector
-const TTM_SHEETS_URL = "https://script.google.com/macros/s/AKfycbyc0rPv6g_lixRbqVme06rPAvbyWc7JqQXN2GvdOx_ua4Kg2W3rMvEZOWdqAuN2pXa2/exec";
+const TTM_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwGOed4KNWghjvGd-fO1rD8L_aZ74gOGCF2NJT65zhmfD7kmh-9PUgeA8cXiU2b9E6f/exec";
 
 function generateOrderId() {
     return 'ORD-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6).toUpperCase();
