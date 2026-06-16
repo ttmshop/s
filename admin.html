@@ -1,104 +1,432 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TTM SHOP অ্যাডমিন প্যানেল</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTM SHOP | Admin Dashboard</title>
     <style>
-        body { font-family: Arial; background: #f0f2f5; padding: 20px; }
-        .login-box { max-width: 400px; margin: 100px auto; background: white; padding: 30px; border-radius: 20px; text-align: center; }
-        .login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; }
-        .login-box button { background: #386f6e; color: white; padding: 12px 30px; border: none; border-radius: 10px; cursor: pointer; }
-        .admin-panel { display: none; max-width: 1400px; margin: 0 auto; }
-        .header { background: #386f6e; color: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; }
-        .btn { background: #ffb84d; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; }
-        .tabs { margin: 20px 0; }
-        .tab { background: white; border: none; padding: 10px 20px; margin: 0 5px; border-radius: 25px; cursor: pointer; }
-        .tab.active { background: #386f6e; color: white; }
-        .content { background: white; padding: 20px; border-radius: 15px; }
-        .content > div { display: none; }
-        .content > div.active { display: block; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 8px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-        .btn-primary { background: #386f6e; color: white; padding: 10px 20px; border: none; border-radius: 25px; cursor: pointer; }
-        .msg { position: fixed; bottom: 20px; right: 20px; background: #386f6e; color: white; padding: 12px 24px; border-radius: 30px; display: none; }
-        .msg.show { display: block; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .login-container h2 {
+            color: #386f6e;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: #386f6e;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .remember-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .remember-row input {
+            width: auto;
+            margin: 0;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .remember-row label {
+            color: #386f6e;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #386f6e 0%, #2c5958 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logout-btn {
+            background: #ffb84d;
+            color: #2c3e3e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #386f6e;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #386f6e;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-primary {
+            background: #386f6e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-warning {
+            background: #ffb84d;
+            color: #2c3e3e;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .products-table {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f5faf9;
+            color: #386f6e;
+        }
+
+        .product-img-preview {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #386f6e;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+            animation: fadeInOut 3s ease;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+
+        .image-url-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .add-product-card {
+            background: #f5faf9;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
-<div id="loginPage" class="login-box">
-    <h2>🔐 অ্যাডমিন লগইন</h2>
-    <input type="password" id="password" placeholder="পাসওয়ার্ড">
-    <button onclick="login()">লগইন</button>
+<!-- Login Page -->
+<div id="loginPage" class="login-container">
+    <h2>🔐 Admin Login</h2>
+    <input type="password" id="adminPassword" placeholder="Enter Password">
+    <div class="remember-row">
+        <input type="checkbox" id="rememberPassword">
+        <label for="rememberPassword">Remember Password</label>
+    </div>
+    <button onclick="checkLogin()">Login</button>
 </div>
 
-<div id="adminPanel" class="admin-panel">
-    <div class="header"><h2>🛍️ TTM SHOP প্যানেল</h2><button class="btn" onclick="logout()">লগআউট</button></div>
-    <div class="tabs"><button class="tab active" onclick="showTab('products')">📦 প্রোডাক্ট</button><button class="tab" onclick="showTab('hero')">🎨 হিরো</button><button class="tab" onclick="showTab('contact')">📞 যোগাযোগ</button><button class="tab" onclick="showTab('footer')">📋 ফুটার</button></div>
-    <div class="content">
-        <div id="productsTab" class="active">
-            <h3>➕ প্রোডাক্ট যোগ</h3>
-            <div class="form-group"><label>টাইটেল</label><input type="text" id="title"></div>
-            <div class="form-group"><label>সংক্ষিপ্ত</label><input type="text" id="shortDesc"></div>
-            <div class="form-group"><label>বিস্তারিত</label><textarea id="longDetails"></textarea></div>
-            <div class="form-group"><label>দাম</label><input type="number" id="price"></div>
-            <div class="form-group"><label>নিয়মিত দাম</label><input type="number" id="regularPrice"></div>
-            <div class="form-group"><label>ছবি URL</label><input type="text" id="imageUrl"></div>
-            <button class="btn-primary" onclick="addProduct()">➕ যোগ</button>
-            <h3>⭐ বেস্ট সেলিং</h3>
-            <table><thead><tr><th>ছবি</th><th>টাইটেল</th><th>দাম</th><th>ছাড়</th><th></th></tr></thead><tbody id="bestList"></tbody></table>
-            <h3>📦 সব প্রোডাক্ট</h3>
-            <table><thead><tr><th>ছবি</th><th>টাইটেল</th><th>দাম</th><th>ছাড়</th><th></th></tr></thead><tbody id="allList"></tbody></table>
+<!-- Admin Dashboard -->
+<div id="adminPanel" class="admin-container">
+    <div class="admin-header">
+        <div>
+            <h2>🛍️ TTM SHOP Admin Panel</h2>
+            <p>Manage all website content from here | Changes go live instantly</p>
         </div>
-        <div id="heroTab"><div class="form-group"><label>হিরো টাইটেল</label><input type="text" id="heroTitle"></div><div class="form-group"><label>হিরো সাবটাইটেল</label><input type="text" id="heroSubtitle"></div><button class="btn-primary" onclick="updateHero()">আপডেট</button></div>
-        <div id="contactTab"><div class="form-group"><label>হোয়াটসঅ্যাপ</label><input type="text" id="whatsapp"></div><div class="form-group"><label>মেসেঞ্জার</label><input type="text" id="messenger"></div><button class="btn-primary" onclick="updateContact()">আপডেট</button></div>
-        <div id="footerTab"><div class="form-group"><label>কপিরাইট</label><input type="text" id="copyright"></div><div class="form-group"><label>সাপোর্ট</label><input type="text" id="support"></div><button class="btn-primary" onclick="updateFooter()">আপডেট</button></div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('products')">📦 Manage Products</button>
+        <button class="tab-btn" onclick="showTab('hero')">🎨 Hero Section</button>
+        <button class="tab-btn" onclick="showTab('contact')">📞 Contact Settings</button>
+        <button class="tab-btn" onclick="showTab('footer')">📋 Footer Settings</button>
+        <button class="tab-btn" onclick="showTab('backup')">💾 Backup & Restore</button>
+    </div>
+
+    <!-- Products Tab -->
+    <div id="productsTab" class="tab-content active">
+        <div class="add-product-card">
+            <h3 style="margin-bottom: 15px;">➕ Add New Product</h3>
+            <div class="form-group">
+                <label>Product Title:</label>
+                <input type="text" id="newTitle" placeholder="e.g., Full Stack Developer">
+            </div>
+            <div class="form-group">
+                <label>Short Description:</label>
+                <input type="text" id="newShortDesc" placeholder="e.g., Smart Watch">
+            </div>
+            <div class="form-group">
+                <label>Detailed Description:</label>
+                <textarea id="newLongDetails" placeholder="Write detailed product description"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Current Price (৳):</label>
+                <input type="number" id="newPrice" placeholder="e.g., 990">
+            </div>
+            <div class="form-group">
+                <label>Regular Price (৳):</label>
+                <input type="number" id="newRegularPrice" placeholder="e.g., 12000">
+            </div>
+            <div class="form-group">
+                <label>Image URL:</label>
+                <input type="text" id="newImageUrl" placeholder="https://...">
+                <div class="image-url-hint">💡 Provide image URL to show image, otherwise icon will be displayed</div>
+            </div>
+            <div class="form-group">
+                <label>Product Type:</label>
+                <select id="newProductType">
+                    <option value="bestSelling">Best Selling</option>
+                    <option value="all">All Products</option>
+                </select>
+            </div>
+            <button class="btn-primary" onclick="addProduct()">➕ Add Product</button>
+        </div>
+
+        <h3 style="margin: 20px 0 10px;">⭐ Best Selling Products</h3>
+        <div class="products-table">
+            <table id="bestSellingTable">
+                <thead>
+                    <tr><th>Image</th><th>Title</th><th>Price</th><th>Discount</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="bestSellingList"></tbody>
+            </table>
+        </div>
+
+        <h3 style="margin: 20px 0 10px;">📦 All Products</h3>
+        <div class="products-table">
+            <table id="allProductsTable">
+                <thead>
+                    <tr><th>Image</th><th>Title</th><th>Price</th><th>Discount</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="allProductsList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Hero Section Tab -->
+    <div id="heroTab" class="tab-content">
+        <div class="form-group">
+            <label>Hero Title:</label>
+            <input type="text" id="heroTitle" placeholder="TTM SHOP">
+        </div>
+        <div class="form-group">
+            <label>Hero Subtitle:</label>
+            <input type="text" id="heroSubtitle" placeholder="Premium Quality. Trusted Delivery">
+        </div>
+        <button class="btn-primary" onclick="updateHeroSection()">Update Hero Section</button>
+    </div>
+
+    <!-- Contact Settings Tab -->
+    <div id="contactTab" class="tab-content">
+        <div class="form-group">
+            <label>WhatsApp Number:</label>
+            <input type="text" id="whatsappNumber" placeholder="8801234567890">
+            <div class="image-url-hint">Enter only number, https://wa.me/ will be added automatically</div>
+        </div>
+        <div class="form-group">
+            <label>Messenger Username:</label>
+            <input type="text" id="messengerUsername" placeholder="yourpageusername">
+            <div class="image-url-hint">The part after https://m.me/</div>
+        </div>
+        <button class="btn-primary" onclick="updateContactSettings()">Update Contact Settings</button>
+    </div>
+
+    <!-- Footer Settings Tab -->
+    <div id="footerTab" class="tab-content">
+        <div class="form-group">
+            <label>Footer Copyright Text:</label>
+            <input type="text" id="copyrightText" placeholder="&copy; 2024 TTM SHOP. All rights reserved.">
+        </div>
+        <div class="form-group">
+            <label>Support Number:</label>
+            <input type="text" id="supportNumber" placeholder="+880123456789">
+        </div>
+        <button class="btn-primary" onclick="updateFooterSettings()">Update Footer</button>
+    </div>
+
+    <!-- Backup Tab -->
+    <div id="backupTab" class="tab-content">
+        <p>Backup all your data or restore from backup</p>
+        <button class="btn-primary" onclick="backupData()">💾 Download Backup</button>
+        <button class="btn-primary" onclick="resetToDefault()">🔄 Restore Default Data</button>
+        <div style="margin-top: 15px;">
+            <label>Restore from backup file:</label>
+            <input type="file" id="restoreFile" accept=".json">
+            <button class="btn-primary" onclick="restoreFromFile()">Restore Now</button>
+        </div>
     </div>
 </div>
-<div id="msg" class="msg"></div>
+
+<div id="message" class="message"></div>
 
 <script>
-    const GITHUB_USERNAME = 'ttmshop';
-    const REPO_NAME = 's';
+    // ==================== গিটহাব সেটিংস (শুধু এই অংশ যোগ করা হয়েছে) ====================
+    // ⚠️ নিচের দুটি লাইন আপনার তথ্য দিয়ে পরিবর্তন করুন ⚠️
+    const GITHUB_USERNAME = 'ttmshop';  // যেমন: raihan123
+    const REPO_NAME = 's';       // যেমন: ttm-shop
     const GITHUB_TOKEN = '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';
-    const ADMIN_PASSWORD = 'admin123';
     
-    let websiteData = {
-        heroTitle: "🛍️ TTM SHOP", heroSubtitle: "Premium Quality. Trusted Delivery",
-        whatsappNumber: "8801234567890", messengerUsername: "yourpageusername",
-        copyrightText: "© 2024 TTM SHOP.", supportNumber: "24/7",
-        bestSellingProducts: [{ id: "bs1", title: "Full Stack", shortDesc: "Course", longDetails: "6 months", price: 990, regularPrice: 12000, icon: "🚀", bgColor: "#e0f0ed", imageUrl: "https://www.startech.com.bd/image/cache/catalog/smart-watch/oraimo/watch-4-plus/oraimo-watch-4-plus-01-500x500.webp" }],
-        allProducts: [{ id: "p1", title: "Python", shortDesc: "Data Science", longDetails: "Learn", price: 3900, regularPrice: 8500, icon: "🐍", bgColor: "#f0f3e8", imageUrl: "" }]
-    };
-    
-    function showMessage(msg) { let m = document.getElementById('msg'); m.innerText = msg; m.classList.add('show'); setTimeout(() => m.classList.remove('show'), 3000); }
-    function saveLocal() { localStorage.setItem('ttm_data', JSON.stringify(websiteData)); }
-    function loadLocal() { let s = localStorage.getItem('ttm_data'); if(s) websiteData = JSON.parse(s); renderTables(); loadForms(); }
-    
-    function renderTables() {
-        let bestHtml = '', allHtml = '';
-        websiteData.bestSellingProducts.forEach((p,i)=>{ bestHtml += `<tr><td>${p.imageUrl?'<img src="'+p.imageUrl+'" width="40">':p.icon}</td><td>${p.title}</td><td>${p.price}৳</td><td>${p.regularPrice>p.price?Math.round(((p.regularPrice-p.price)/p.regularPrice)*100)+'%':'-'}</td><td><button onclick="editBest(${i})">✏️</button> <button onclick="deleteBest(${i})">🗑️</button></td></tr>`; });
-        websiteData.allProducts.forEach((p,i)=>{ allHtml += `<tr><td>${p.imageUrl?'<img src="'+p.imageUrl+'" width="40">':p.icon}</td><td>${p.title}</td><td>${p.price}৳</td><td>${p.regularPrice>p.price?Math.round(((p.regularPrice-p.price)/p.regularPrice)*100)+'%':'-'}</td><td><button onclick="editAll(${i})">✏️</button> <button onclick="deleteAll(${i})">🗑️</button></td></tr>`; });
-        document.getElementById('bestList').innerHTML = bestHtml; document.getElementById('allList').innerHTML = allHtml;
-    }
-    
-    function loadForms() {
-        document.getElementById('heroTitle').value = websiteData.heroTitle; document.getElementById('heroSubtitle').value = websiteData.heroSubtitle;
-        document.getElementById('whatsapp').value = websiteData.whatsappNumber; document.getElementById('messenger').value = websiteData.messengerUsername;
-        document.getElementById('copyright').value = websiteData.copyrightText; document.getElementById('support').value = websiteData.supportNumber;
-    }
-    
-    async function syncGit() {
+    // গিটহাবে ফাইল আপডেট করার ফাংশন
+    async function syncToGitHub() {
         try {
-            showMessage('⏳ আপডেট হচ্ছে...');
-            let url = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/index.html`;
-            let res = await fetch(url, { headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` } });
-            if(!res.ok) throw new Error('ফাইল পাওয়া যায়নি');
-            let data = await res.json();
-            let html = atob(data.content);
+            showMessage('⏳ ওয়েবসাইট লাইভ আপডেট হচ্ছে...');
+            
+            // বর্তমান index.html পড়ুন
+            const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/index.html`;
+            const getRes = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
+            });
+            
+            if (!getRes.ok) {
+                throw new Error('গিটহাব থেকে ফাইল পড়া যাচ্ছে না');
+            }
+            
+            const fileData = await getRes.json();
+            let html = atob(fileData.content);
+            
+            // আপনার ডাটা দিয়ে index.html আপডেট করুন
             html = html.replace(/let bestSellingProducts = \[[\s\S]*?\];/, `let bestSellingProducts = ${JSON.stringify(websiteData.bestSellingProducts, null, 8)};`);
             html = html.replace(/let allProducts = \[[\s\S]*?\];/, `let allProducts = ${JSON.stringify(websiteData.allProducts, null, 8)};`);
             html = html.replace(/whatsappNumber: "[^"]*",/, `whatsappNumber: "${websiteData.whatsappNumber}",`);
@@ -107,28 +435,331 @@
             html = html.replace(/supportNumber: "[^"]*",/, `supportNumber: "${websiteData.supportNumber}",`);
             html = html.replace(/heroTitle: "[^"]*",/, `heroTitle: "${websiteData.heroTitle}",`);
             html = html.replace(/heroSubtitle: "[^"]*",/, `heroSubtitle: "${websiteData.heroSubtitle}",`);
-            let put = await fetch(url, { method: 'PUT', headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'অ্যাডমিন আপডেট', content: btoa(unescape(encodeURIComponent(html))), sha: data.sha }) });
-            if(put.ok) showMessage('✅ সফল! 1-2 মিনিট পর আপডেট হবে'); else showMessage('❌ ব্যর্থ');
-        } catch(e) { showMessage('❌ এরর: '+e.message); }
+            
+            // গিটহাবে আপলোড করুন
+            const putRes = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: '🔄 অ্যাডমিন প্যানেল থেকে ওয়েবসাইট আপডেট',
+                    content: btoa(unescape(encodeURIComponent(html))),
+                    sha: fileData.sha
+                })
+            });
+            
+            if(putRes.ok) {
+                showMessage('✅ সফল! 1-2 মিনিটের মধ্যে ওয়েবসাইট আপডেট হবে');
+            } else {
+                const err = await putRes.json();
+                showMessage('❌ আপডেট ব্যর্থ: ' + (err.message || 'অজানা ত্রুটি'));
+            }
+        } catch(e) {
+            console.error('Sync error:', e);
+            showMessage('❌ এরর: ' + e.message);
+        }
     }
     
+    // ==================== Default Data ====================
+    let websiteData = {
+        heroTitle: "🛍️ TTM SHOP",
+        heroSubtitle: "Premium Quality. Trusted Delivery",
+        whatsappNumber: "8801234567890",
+        messengerUsername: "yourpageusername",
+        copyrightText: "© 2024 TTM SHOP. All rights reserved.",
+        supportNumber: "24/7 Support",
+        bestSellingProducts: [
+            { id: "bs1", title: "Full Stack Developer", shortDesc: "Smart Watch", longDetails: "6 months live projects, certificate, interview preparation, and job placement support.", price: 990, regularPrice: 12000, icon: "🚀", bgColor: "#e0f0ed", imageUrl: "https://www.startech.com.bd/image/cache/catalog/smart-watch/oraimo/watch-4-plus/oraimo-watch-4-plus-01-500x500.webp" },
+            { id: "bs2", title: "Digital Marketing", shortDesc: "SEO, Google Ads", longDetails: "Complete campaign optimization, content strategy, analytics, and practical case studies.", price: 3200, regularPrice: 8000, icon: "📢", bgColor: "#ffe0cc", imageUrl: "https://www.startech.com.bd/image/cache/catalog/smart-watch/oraimo/watch-5-lite/watch-5-lite-osw-804-black-500x500.webp" },
+            { id: "bs3", title: "Graphic Design Pro", shortDesc: "Photoshop, Illustrator", longDetails: "Logo design, banners, thumbnails, branding, and portfolio development.", price: 2800, regularPrice: 6000, icon: "🎨", bgColor: "#e3f0ff", imageUrl: "" }
+        ],
+        allProducts: [
+            { id: "p1", title: "Python Data Science", shortDesc: "Pandas, NumPy", longDetails: "Data cleaning, visualization, real datasets, and machine learning basics.", price: 3900, regularPrice: 8500, icon: "🐍", bgColor: "#f0f3e8", imageUrl: "" },
+            { id: "p2", title: "AI & Machine Learning", shortDesc: "TensorFlow, Scikit", longDetails: "Model building, image classification, neural networks, and hands-on projects.", price: 5200, regularPrice: 15000, icon: "🤖", bgColor: "#f8eef0", imageUrl: "" },
+            { id: "p3", title: "Web Design Foundation", shortDesc: "HTML, CSS, JS", longDetails: "Responsive design, flexbox, grid, animations, and portfolio website.", price: 1990, regularPrice: 4500, icon: "🎨", bgColor: "#eef5f5", imageUrl: "" },
+            { id: "p4", title: "Freelancing Handbook", shortDesc: "Upwork, Fiverr", longDetails: "Profile optimization, client acquisition, bidding strategies, and rating improvement.", price: 1500, regularPrice: 3500, icon: "💼", bgColor: "#fff0db", imageUrl: "" }
+        ]
+    };
+
+    // Admin password (You can change this)
+    const ADMIN_PASSWORD = "admin123";
+
+    // Load saved password from localStorage
+    function loadSavedPassword() {
+        const saved = localStorage.getItem("admin_saved_password");
+        if(saved) {
+            document.getElementById('adminPassword').value = saved;
+            document.getElementById('rememberPassword').checked = true;
+        }
+    }
+
+    // Save password if checkbox is checked
+    function savePasswordIfNeeded(password) {
+        if(document.getElementById('rememberPassword').checked) {
+            localStorage.setItem("admin_saved_password", password);
+            localStorage.setItem("remember_admin", "true");
+        } else {
+            localStorage.removeItem("admin_saved_password");
+            localStorage.removeItem("remember_admin");
+        }
+    }
+
+    // Load data from localStorage
+    function loadData() {
+        const saved = localStorage.getItem("ttm_website_data");
+        if(saved) {
+            websiteData = JSON.parse(saved);
+        } else {
+            saveData();
+        }
+        renderProductsTable();
+        loadSettingsToForm();
+    }
+
+    function saveData() {
+        localStorage.setItem("ttm_website_data", JSON.stringify(websiteData));
+    }
+
+    function renderProductsTable() {
+        // Best selling table
+        const bestTbody = document.getElementById('bestSellingList');
+        bestTbody.innerHTML = websiteData.bestSellingProducts.map((p, idx) => `
+            <tr>
+                <td>${p.imageUrl ? `<img src="${p.imageUrl}" class="product-img-preview" onerror="this.src=''">` : p.icon || '📦'}</td>
+                <td>${escapeHtml(p.title)}</td>
+                <td>${p.price} ৳</td>
+                <td>${p.regularPrice > p.price ? Math.round(((p.regularPrice - p.price) / p.regularPrice) * 100) + '%' : '-'}</td>
+                <td>
+                    <button class="btn-warning" onclick="editProduct('bestSelling', ${idx})">✏️ Edit</button>
+                    <button class="btn-danger" onclick="deleteProduct('bestSelling', ${idx})">🗑️ Delete</button>
+                 </td>
+             </tr>
+        `).join('');
+
+        // All products table
+        const allTbody = document.getElementById('allProductsList');
+        allTbody.innerHTML = websiteData.allProducts.map((p, idx) => `
+             <tr>
+                 <td>${p.imageUrl ? `<img src="${p.imageUrl}" class="product-img-preview" onerror="this.src=''">` : p.icon || '📦'}</td>
+                 <td>${escapeHtml(p.title)}</td>
+                 <td>${p.price} ৳</td>
+                 <td>${p.regularPrice > p.price ? Math.round(((p.regularPrice - p.price) / p.regularPrice) * 100) + '%' : '-'}</td>
+                 <td>
+                    <button class="btn-warning" onclick="editProduct('allProducts', ${idx})">✏️ Edit</button>
+                    <button class="btn-danger" onclick="deleteProduct('allProducts', ${idx})">🗑️ Delete</button>
+                 </td>
+             </tr>
+        `).join('');
+    }
+
+    function loadSettingsToForm() {
+        document.getElementById('heroTitle').value = websiteData.heroTitle;
+        document.getElementById('heroSubtitle').value = websiteData.heroSubtitle;
+        document.getElementById('whatsappNumber').value = websiteData.whatsappNumber;
+        document.getElementById('messengerUsername').value = websiteData.messengerUsername;
+        document.getElementById('copyrightText').value = websiteData.copyrightText;
+        document.getElementById('supportNumber').value = websiteData.supportNumber;
+    }
+
     async function addProduct() {
-        websiteData.allProducts.push({ id: Date.now().toString(), title: document.getElementById('title').value, shortDesc: document.getElementById('shortDesc').value, longDetails: document.getElementById('longDetails').value, price: parseInt(document.getElementById('price').value), regularPrice: parseInt(document.getElementById('regularPrice').value), icon: "🛍️", bgColor: "#f5faf9", imageUrl: document.getElementById('imageUrl').value });
-        saveLocal(); renderTables(); await syncGit();
-        document.getElementById('title').value = ''; document.getElementById('shortDesc').value = ''; document.getElementById('longDetails').value = ''; document.getElementById('price').value = ''; document.getElementById('regularPrice').value = ''; document.getElementById('imageUrl').value = '';
+        const newProduct = {
+            id: Date.now().toString(),
+            title: document.getElementById('newTitle').value,
+            shortDesc: document.getElementById('newShortDesc').value,
+            longDetails: document.getElementById('newLongDetails').value,
+            price: parseInt(document.getElementById('newPrice').value),
+            regularPrice: parseInt(document.getElementById('newRegularPrice').value),
+            icon: "🛍️",
+            bgColor: "#f5faf9",
+            imageUrl: document.getElementById('newImageUrl').value
+        };
+
+        const type = document.getElementById('newProductType').value;
+        if(type === 'bestSelling') {
+            websiteData.bestSellingProducts.push(newProduct);
+        } else {
+            websiteData.allProducts.push(newProduct);
+        }
+
+        saveData();
+        renderProductsTable();
+        clearProductForm();
+        showMessage('✅ Product added successfully!');
+        await syncToGitHub();  // গিটহাবে সিঙ্ক
     }
-    function editBest(i) { let p = websiteData.bestSellingProducts[i]; let t = prompt('টাইটেল:', p.title); if(t) p.title = t; let pr = prompt('দাম:', p.price); if(pr) p.price = parseInt(pr); saveLocal(); renderTables(); syncGit(); }
-    function deleteBest(i) { if(confirm('ডিলিট?')){ websiteData.bestSellingProducts.splice(i,1); saveLocal(); renderTables(); syncGit(); } }
-    function editAll(i) { let p = websiteData.allProducts[i]; let t = prompt('টাইটেল:', p.title); if(t) p.title = t; let pr = prompt('দাম:', p.price); if(pr) p.price = parseInt(pr); saveLocal(); renderTables(); syncGit(); }
-    function deleteAll(i) { if(confirm('ডিলিট?')){ websiteData.allProducts.splice(i,1); saveLocal(); renderTables(); syncGit(); } }
-    async function updateHero() { websiteData.heroTitle = document.getElementById('heroTitle').value; websiteData.heroSubtitle = document.getElementById('heroSubtitle').value; saveLocal(); await syncGit(); }
-    async function updateContact() { websiteData.whatsappNumber = document.getElementById('whatsapp').value; websiteData.messengerUsername = document.getElementById('messenger').value; saveLocal(); await syncGit(); }
-    async function updateFooter() { websiteData.copyrightText = document.getElementById('copyright').value; websiteData.supportNumber = document.getElementById('support').value; saveLocal(); await syncGit(); }
-    
-    function showTab(name) { document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.content>div').forEach(d=>d.classList.remove('active')); event.target.classList.add('active'); document.getElementById(name+'Tab').classList.add('active'); }
-    function login() { if(document.getElementById('password').value === ADMIN_PASSWORD) { sessionStorage.setItem('admin','true'); document.getElementById('loginPage').style.display='none'; document.getElementById('adminPanel').style.display='block'; loadLocal(); } else showMessage('ভুল পাসওয়ার্ড!'); }
-    function logout() { sessionStorage.removeItem('admin'); document.getElementById('loginPage').style.display='block'; document.getElementById('adminPanel').style.display='none'; }
-    if(sessionStorage.getItem('admin')==='true') { document.getElementById('loginPage').style.display='none'; document.getElementById('adminPanel').style.display='block'; loadLocal(); }
+
+    function clearProductForm() {
+        document.getElementById('newTitle').value = '';
+        document.getElementById('newShortDesc').value = '';
+        document.getElementById('newLongDetails').value = '';
+        document.getElementById('newPrice').value = '';
+        document.getElementById('newRegularPrice').value = '';
+        document.getElementById('newImageUrl').value = '';
+    }
+
+    async function editProduct(type, index) {
+        let product;
+        if(type === 'bestSelling') {
+            product = websiteData.bestSellingProducts[index];
+        } else {
+            product = websiteData.allProducts[index];
+        }
+        
+        const newTitle = prompt('Enter new title:', product.title);
+        if(newTitle) product.title = newTitle;
+        
+        const newPrice = prompt('Enter new price:', product.price);
+        if(newPrice) product.price = parseInt(newPrice);
+        
+        const newImageUrl = prompt('Enter image URL:', product.imageUrl);
+        if(newImageUrl !== null) product.imageUrl = newImageUrl;
+        
+        saveData();
+        renderProductsTable();
+        showMessage('✅ Product updated successfully!');
+        await syncToGitHub();  // গিটহাবে সিঙ্ক
+    }
+
+    async function deleteProduct(type, index) {
+        if(confirm('Are you sure you want to delete this product?')) {
+            if(type === 'bestSelling') {
+                websiteData.bestSellingProducts.splice(index, 1);
+            } else {
+                websiteData.allProducts.splice(index, 1);
+            }
+            saveData();
+            renderProductsTable();
+            showMessage('🗑️ Product deleted successfully!');
+            await syncToGitHub();  // গিটহাবে সিঙ্ক
+        }
+    }
+
+    async function updateHeroSection() {
+        websiteData.heroTitle = document.getElementById('heroTitle').value;
+        websiteData.heroSubtitle = document.getElementById('heroSubtitle').value;
+        saveData();
+        showMessage('✅ Hero section updated successfully!');
+        await syncToGitHub();  // গিটহাবে সিঙ্ক
+    }
+
+    async function updateContactSettings() {
+        websiteData.whatsappNumber = document.getElementById('whatsappNumber').value;
+        websiteData.messengerUsername = document.getElementById('messengerUsername').value;
+        saveData();
+        showMessage('✅ Contact settings updated successfully!');
+        await syncToGitHub();  // গিটহাবে সিঙ্ক
+    }
+
+    async function updateFooterSettings() {
+        websiteData.copyrightText = document.getElementById('copyrightText').value;
+        websiteData.supportNumber = document.getElementById('supportNumber').value;
+        saveData();
+        showMessage('✅ Footer updated successfully!');
+        await syncToGitHub();  // গিটহাবে সিঙ্ক
+    }
+
+    function backupData() {
+        const dataStr = JSON.stringify(websiteData, null, 2);
+        const blob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ttm_shop_backup_${new Date().toISOString().slice(0,19)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showMessage('💾 Backup download started!');
+    }
+
+    function resetToDefault() {
+        if(confirm('⚠️ All data will be reset to default! Are you sure?')) {
+            location.reload();
+        }
+    }
+
+    async function restoreFromFile() {
+        const fileInput = document.getElementById('restoreFile');
+        const file = fileInput.files[0];
+        if(!file) {
+            showMessage('Please select a backup file');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const restored = JSON.parse(e.target.result);
+                websiteData = restored;
+                saveData();
+                renderProductsTable();
+                loadSettingsToForm();
+                showMessage('✅ Data restored successfully!');
+                await syncToGitHub();  // গিটহাবে সিঙ্ক
+            } catch(err) {
+                showMessage('❌ Invalid file!');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function escapeHtml(str) {
+        if(!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function showMessage(msg) {
+        const msgDiv = document.getElementById('message');
+        msgDiv.textContent = msg;
+        msgDiv.classList.add('show');
+        setTimeout(() => {
+            msgDiv.classList.remove('show');
+        }, 4000);
+    }
+
+    function showTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        
+        document.getElementById(`${tabName}Tab`).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function checkLogin() {
+        const password = document.getElementById('adminPassword').value;
+        if(password === ADMIN_PASSWORD) {
+            savePasswordIfNeeded(password);
+            sessionStorage.setItem('admin_logged_in', 'true');
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadData();
+        } else {
+            showMessage('❌ Wrong password!');
+        }
+    }
+
+    function logout() {
+        sessionStorage.removeItem('admin_logged_in');
+        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('adminPassword').value = '';
+    }
+
+    // Check if already logged in
+    window.onload = () => {
+        loadSavedPassword();
+        const loggedIn = sessionStorage.getItem('admin_logged_in');
+        if(loggedIn === 'true') {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadData();
+        }
+    };
 </script>
 </body>
 </html>
