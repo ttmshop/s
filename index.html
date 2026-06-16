@@ -314,7 +314,7 @@
         .modal-card {
             background: white;
             width: 90%;
-            max-width: 500px;
+            max-width: 550px;
             border-radius: 28px;
             padding: 1.2rem;
             transform: scale(0.9);
@@ -360,8 +360,8 @@
             align-items: center;
             justify-content: center;
             background: #f0f7f5;
-            min-height: 250px;
-            max-height: 350px;
+            min-height: 200px;
+            max-height: 320px;
             overflow: auto;
         }
 
@@ -369,7 +369,7 @@
             width: auto;
             height: auto;
             max-width: 100%;
-            max-height: 350px;
+            max-height: 320px;
             object-fit: contain;
             display: block;
             margin: 0 auto;
@@ -384,7 +384,7 @@
         }
 
         .modal-icon-placeholder {
-            height: 250px;
+            height: 200px;
             background: #f0f7f5;
             display: flex;
             align-items: center;
@@ -761,7 +761,7 @@
     const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwGOed4KNWghjvGd-fO1rD8L_aZ74gOGCF2NJT65zhmfD7kmh-9PUgeA8cXiU2b9E6f/exec";
     
     let bestSellingProducts = [
-        { id: "bs1", title: "Full Stack Developer", shortDesc: "Smart Watch", longDetails: "6 months live projects, certificate, interview preparation, and job placement support.", price: 990, regularPrice: 12000, icon: "🚀", bgColor: "#e0f0ed", imageUrl: "https://www.startech.com.bd/image/cache/catalog/smart-watch/oraimo/watch-4-plus/oraimo-watch-4-plus-01-500x500.webp" },
+        { id: "bs1", title: "Full Stack Developer", shortDesc: "Smart Watch", longDetails: "6 months live projects, certificate, interview preparation, and job placement support.", price: 990, regularPrice: 12000, icon: "🚀", bgColor: "#e0f0ed", imageUrl: "https://cdn-img.oraimo.com/fit-in/600x600/GH/product/2025/01/09/watch-5-lite-osw-804-2-features.jpg" },
         { id: "bs2", title: "Digital Marketing", shortDesc: "SEO, Google Ads", longDetails: "Complete campaign optimization, content strategy, analytics, and practical case studies.", price: 3200, regularPrice: 8000, icon: "📢", bgColor: "#ffe0cc", imageUrl: "https://www.startech.com.bd/image/cache/catalog/smart-watch/oraimo/watch-5-lite/watch-5-lite-osw-804-black-500x500.webp" },
         { id: "bs3", title: "Graphic Design Pro", shortDesc: "Photoshop, Illustrator", longDetails: "Logo design, banners, thumbnails, branding, and portfolio development.", price: 2800, regularPrice: 6000, icon: "🎨", bgColor: "#e3f0ff", imageUrl: "" }
     ];
@@ -948,8 +948,104 @@
     function openProductModal(product) {
         let modalDiv = document.createElement('div');
         modalDiv.className = 'modal-overlay';
-        let imageHtml = product.imageUrl ? `<div class="modal-image-wrapper" onclick="openZoomModal('${product.imageUrl}', '${escapeHtml(product.title)}')"><div class="modal-image-container"><img class="modal-img-full" src="${product.imageUrl}" alt="${product.title}"></div><div class="zoom-hint">🔍 Click image to zoom</div></div>` : `<div class="modal-icon-placeholder">${product.icon || '📦'}</div>`;
-        modalDiv.innerHTML = `<div class="modal-card"><div class="modal-header"><h3>${escapeHtml(product.title)}</h3><span class="close-modal">&times;</span></div>${imageHtml}<div class="modal-detail"><strong>Description:</strong><br>${escapeHtml(product.longDetails)}</div><div class="modal-price">${product.regularPrice && product.regularPrice > product.price ? `<span class="modal-old-price">${product.regularPrice} ৳</span>` : ''}<span class="modal-current-price">${product.price} ৳</span></div><div id="modalDeliveryInfo" style="font-size:0.75rem; color:#666; margin:5px 0;"></div><div id="modalTotalPrice" style="font-size:0.95rem; font-weight:800; color:#386f6e; margin:8px 0;"></div><div class="order-form-section"><div class="order-form"><input type="text" id="modalName" placeholder="Your Name *"><input type="tel" id="modalPhone" placeholder="Phone Number *"><input type="text" id="modalAddress" placeholder="Address *"><textarea id="modalComment" placeholder="Write here..." rows="2"></textarea></div></div><div class="modal-buttons"><button class="btn-add-cart" id="modalAddToCart">➕ Add to Cart</button><button class="btn-confirm" id="modalConfirmOrder">✅ Confirm Order</button></div></div>`;
+        
+        // প্রোডাক্টের স্পেসিফিকেশন (আপনার প্রোডাক্ট অনুযায়ী এডিট করুন)
+        const specifications = {
+            'Full Stack Developer': { model: 'FSD-2024', battery: 'N/A', ram: '16GB', storage: '512GB' },
+            'Digital Marketing': { model: 'DM-2024', battery: 'N/A', ram: '8GB', storage: '256GB' },
+            'Graphic Design Pro': { model: 'GD-2024', battery: 'N/A', ram: '16GB', storage: '512GB' },
+            'Python Data Science': { model: 'PDS-2024', battery: 'N/A', ram: '16GB', storage: '512GB' },
+            'AI & Machine Learning': { model: 'AIML-2024', battery: 'N/A', ram: '32GB', storage: '1TB' },
+            'Web Design Foundation': { model: 'WDF-2024', battery: 'N/A', ram: '8GB', storage: '256GB' },
+            'Freelancing Handbook': { model: 'FB-2024', battery: 'N/A', ram: '4GB', storage: '128GB' }
+        };
+        
+        const spec = specifications[product.title] || { model: 'N/A', battery: 'N/A', ram: 'N/A', storage: 'N/A' };
+        
+        // ছবি সাজেস্ট করার লিস্ট
+        const imageSuggestions = [
+            'https://www.startech.com.bd/image/cache/catalog/smart-watch/oraimo/watch-4-plus/oraimo-watch-4-plus-01-500x500.webp',
+            'https://www.startech.com.bd/image/cache/catalog/smart-watch/oraimo/watch-5-lite/watch-5-lite-osw-804-black-500x500.webp',
+            'https://cdn-img.oraimo.com/fit-in/600x600/GH/product/2025/01/09/watch-5-lite-osw-804-2-features.jpg',
+            'https://www.startech.com.bd/image/cache/catalog/earphone/boAt/boAt-Bassheads-100/Boat-Bassheads-100-01-500x500.jpg',
+            'https://www.startech.com.bd/image/cache/catalog/headphone/boAt/boAt-immortal-201/boAt-immortal-201-black-500x500.jpg'
+        ];
+        
+        let imageHtml = product.imageUrl ? 
+            `<div class="modal-image-wrapper" onclick="openZoomModal('${product.imageUrl}', '${escapeHtml(product.title)}')">
+                <div class="modal-image-container">
+                    <img class="modal-img-full" src="${product.imageUrl}" alt="${product.title}">
+                </div>
+                <div class="zoom-hint">🔍 Click image to zoom</div>
+             </div>` : 
+            `<div class="modal-icon-placeholder">${product.icon || '📦'}</div>`;
+        
+        // স্পেসিফিকেশন টেবিল HTML
+        const specHtml = `
+            <div style="background: #f5faf9; border-radius: 14px; padding: 12px; margin: 10px 0;">
+                <h4 style="color: #386f6e; margin-bottom: 10px; font-size: 0.9rem;">📋 Product Specifications</h4>
+                <table style="width: 100%; font-size: 0.8rem;">
+                    <tr><td style="padding: 6px 0; font-weight: 600; color: #386f6e; width: 40%;">Model</td><td style="padding: 6px 0;">${spec.model}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: 600; color: #386f6e;">Battery</td><td style="padding: 6px 0;">${spec.battery}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: 600; color: #386f6e;">RAM</td><td style="padding: 6px 0;">${spec.ram}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: 600; color: #386f6e;">Storage</td><td style="padding: 6px 0;">${spec.storage}</td></tr>
+                </table>
+            </div>
+        `;
+        
+        // ছবি সাজেস্ট করার HTML
+        const suggestHtml = `
+            <div style="margin: 10px 0;">
+                <label style="font-size: 0.75rem; color: #666; display: block; margin-bottom: 5px;">📸 Suggest Product Images (click to preview)</label>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; max-height: 80px; overflow-y: auto;">
+                    ${imageSuggestions.map(url => `
+                        <div style="width: 50px; height: 50px; border-radius: 8px; overflow: hidden; cursor: pointer; border: 2px solid #ddd; flex-shrink: 0;" 
+                             onclick="document.querySelector('.modal-img-full').src='${url}'; document.querySelector('.modal-img-full').parentElement.parentElement.onclick=function(){openZoomModal('${url}','${escapeHtml(product.title)}')}">
+                            <img src="${url}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 5px;">
+                    <input type="text" id="customImageUrl" placeholder="Or paste image URL here..." style="width: 100%; padding: 6px 10px; border: 1px solid #ddd; border-radius: 20px; font-size: 0.75rem;">
+                    <button onclick="document.querySelector('.modal-img-full').src=document.getElementById('customImageUrl').value; document.querySelector('.modal-img-full').parentElement.parentElement.onclick=function(){openZoomModal(document.getElementById('customImageUrl').value,'${escapeHtml(product.title)}')}" style="margin-top: 4px; background: #386f6e; color: white; border: none; padding: 4px 12px; border-radius: 15px; font-size: 0.7rem; cursor: pointer;">Apply</button>
+                </div>
+            </div>
+        `;
+        
+        modalDiv.innerHTML = `
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3>${escapeHtml(product.title)}</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                ${imageHtml}
+                ${suggestHtml}
+                <div class="modal-detail">
+                    <strong>Description:</strong><br>
+                    ${escapeHtml(product.longDetails)}
+                </div>
+                ${specHtml}
+                <div class="modal-price">
+                    ${product.regularPrice && product.regularPrice > product.price ? `<span class="modal-old-price">${product.regularPrice} ৳</span>` : ''}
+                    <span class="modal-current-price">${product.price} ৳</span>
+                </div>
+                <div id="modalDeliveryInfo" style="font-size:0.75rem; color:#666; margin:5px 0;"></div>
+                <div id="modalTotalPrice" style="font-size:0.95rem; font-weight:800; color:#386f6e; margin:8px 0;"></div>
+                <div class="order-form-section">
+                    <div class="order-form">
+                        <input type="text" id="modalName" placeholder="Your Name *">
+                        <input type="tel" id="modalPhone" placeholder="Phone Number *">
+                        <input type="text" id="modalAddress" placeholder="Address *">
+                        <textarea id="modalComment" placeholder="Write here..." rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn-add-cart" id="modalAddToCart">➕ Add to Cart</button>
+                    <button class="btn-confirm" id="modalConfirmOrder">✅ Confirm Order</button>
+                </div>
+            </div>
+        `;
+        
         document.body.appendChild(modalDiv);
         setTimeout(() => modalDiv.classList.add('active'), 10);
         
@@ -965,8 +1061,13 @@
             let address = addressInput.value;
             let deliveryCharge = getDeliveryCharge(address);
             let total = product.price + deliveryCharge;
-            if(deliveryCharge > 0) { deliveryInfoSpan.innerHTML = `📍 Delivery: ${deliveryCharge} ৳ (${address.toLowerCase().includes('dhaka') ? 'Inside Dhaka' : 'Outside Dhaka'})`; totalPriceSpan.innerHTML = `Total: ${total} ৳`; } 
-            else { deliveryInfoSpan.innerHTML = `📍 Enter address for delivery charge`; totalPriceSpan.innerHTML = `Total: ${product.price} ৳ + delivery`; }
+            if(deliveryCharge > 0) { 
+                deliveryInfoSpan.innerHTML = `📍 Delivery: ${deliveryCharge} ৳ (${address.toLowerCase().includes('dhaka') ? 'Inside Dhaka' : 'Outside Dhaka'})`; 
+                totalPriceSpan.innerHTML = `Total: ${total} ৳`; 
+            } else { 
+                deliveryInfoSpan.innerHTML = `📍 Enter address for delivery charge`; 
+                totalPriceSpan.innerHTML = `Total: ${product.price} ৳ + delivery`; 
+            }
         }
         addressInput.addEventListener('input', updateModalPrice);
         updateModalPrice();
