@@ -272,7 +272,7 @@
     <div class="admin-header">
         <div>
             <h2>🛍️ TTM SHOP Admin Panel</h2>
-            <p>Manage all website content from here</p>
+            <p>Manage all website content from here | Changes go live instantly</p>
         </div>
         <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
@@ -402,6 +402,66 @@
 <div id="message" class="message"></div>
 
 <script>
+    // ==================== গিটহাব সেটিংস (শুধু এই অংশ যোগ করা হয়েছে) ====================
+    // ⚠️ নিচের দুটি লাইন আপনার তথ্য দিয়ে পরিবর্তন করুন ⚠️
+    const GITHUB_USERNAME = 'আপনার_ইউজারনেম';  // যেমন: raihan123
+    const REPO_NAME = 'আপনার_রেপোর_নাম';       // যেমন: ttm-shop
+    const GITHUB_TOKEN = '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';
+    
+    // গিটহাবে ফাইল আপডেট করার ফাংশন
+    async function syncToGitHub() {
+        try {
+            showMessage('⏳ ওয়েবসাইট লাইভ আপডেট হচ্ছে...');
+            
+            // বর্তমান index.html পড়ুন
+            const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/index.html`;
+            const getRes = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
+            });
+            
+            if (!getRes.ok) {
+                throw new Error('গিটহাব থেকে ফাইল পড়া যাচ্ছে না');
+            }
+            
+            const fileData = await getRes.json();
+            let html = atob(fileData.content);
+            
+            // আপনার ডাটা দিয়ে index.html আপডেট করুন
+            html = html.replace(/let bestSellingProducts = \[[\s\S]*?\];/, `let bestSellingProducts = ${JSON.stringify(websiteData.bestSellingProducts, null, 8)};`);
+            html = html.replace(/let allProducts = \[[\s\S]*?\];/, `let allProducts = ${JSON.stringify(websiteData.allProducts, null, 8)};`);
+            html = html.replace(/whatsappNumber: "[^"]*",/, `whatsappNumber: "${websiteData.whatsappNumber}",`);
+            html = html.replace(/messengerUsername: "[^"]*",/, `messengerUsername: "${websiteData.messengerUsername}",`);
+            html = html.replace(/copyrightText: "[^"]*",/, `copyrightText: "${websiteData.copyrightText}",`);
+            html = html.replace(/supportNumber: "[^"]*",/, `supportNumber: "${websiteData.supportNumber}",`);
+            html = html.replace(/heroTitle: "[^"]*",/, `heroTitle: "${websiteData.heroTitle}",`);
+            html = html.replace(/heroSubtitle: "[^"]*",/, `heroSubtitle: "${websiteData.heroSubtitle}",`);
+            
+            // গিটহাবে আপলোড করুন
+            const putRes = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: '🔄 অ্যাডমিন প্যানেল থেকে ওয়েবসাইট আপডেট',
+                    content: btoa(unescape(encodeURIComponent(html))),
+                    sha: fileData.sha
+                })
+            });
+            
+            if(putRes.ok) {
+                showMessage('✅ সফল! 1-2 মিনিটের মধ্যে ওয়েবসাইট আপডেট হবে');
+            } else {
+                const err = await putRes.json();
+                showMessage('❌ আপডেট ব্যর্থ: ' + (err.message || 'অজানা ত্রুটি'));
+            }
+        } catch(e) {
+            console.error('Sync error:', e);
+            showMessage('❌ এরর: ' + e.message);
+        }
+    }
+    
     // ==================== Default Data ====================
     let websiteData = {
         heroTitle: "🛍️ TTM SHOP",
@@ -474,23 +534,23 @@
                 <td>
                     <button class="btn-warning" onclick="editProduct('bestSelling', ${idx})">✏️ Edit</button>
                     <button class="btn-danger" onclick="deleteProduct('bestSelling', ${idx})">🗑️ Delete</button>
-                </td>
-            </tr>
+                 </td>
+             </tr>
         `).join('');
 
         // All products table
         const allTbody = document.getElementById('allProductsList');
         allTbody.innerHTML = websiteData.allProducts.map((p, idx) => `
-            <tr>
-                <td>${p.imageUrl ? `<img src="${p.imageUrl}" class="product-img-preview" onerror="this.src=''">` : p.icon || '📦'}</td>
-                <td>${escapeHtml(p.title)}</td>
-                <td>${p.price} ৳</td>
-                <td>${p.regularPrice > p.price ? Math.round(((p.regularPrice - p.price) / p.regularPrice) * 100) + '%' : '-'}</td>
-                <td>
+             <tr>
+                 <td>${p.imageUrl ? `<img src="${p.imageUrl}" class="product-img-preview" onerror="this.src=''">` : p.icon || '📦'}</td>
+                 <td>${escapeHtml(p.title)}</td>
+                 <td>${p.price} ৳</td>
+                 <td>${p.regularPrice > p.price ? Math.round(((p.regularPrice - p.price) / p.regularPrice) * 100) + '%' : '-'}</td>
+                 <td>
                     <button class="btn-warning" onclick="editProduct('allProducts', ${idx})">✏️ Edit</button>
                     <button class="btn-danger" onclick="deleteProduct('allProducts', ${idx})">🗑️ Delete</button>
-                </td>
-            </tr>
+                 </td>
+             </tr>
         `).join('');
     }
 
@@ -503,7 +563,7 @@
         document.getElementById('supportNumber').value = websiteData.supportNumber;
     }
 
-    function addProduct() {
+    async function addProduct() {
         const newProduct = {
             id: Date.now().toString(),
             title: document.getElementById('newTitle').value,
@@ -527,7 +587,7 @@
         renderProductsTable();
         clearProductForm();
         showMessage('✅ Product added successfully!');
-        syncToLiveSite();
+        await syncToGitHub();  // গিটহাবে সিঙ্ক
     }
 
     function clearProductForm() {
@@ -539,7 +599,7 @@
         document.getElementById('newImageUrl').value = '';
     }
 
-    function editProduct(type, index) {
+    async function editProduct(type, index) {
         let product;
         if(type === 'bestSelling') {
             product = websiteData.bestSellingProducts[index];
@@ -559,10 +619,10 @@
         saveData();
         renderProductsTable();
         showMessage('✅ Product updated successfully!');
-        syncToLiveSite();
+        await syncToGitHub();  // গিটহাবে সিঙ্ক
     }
 
-    function deleteProduct(type, index) {
+    async function deleteProduct(type, index) {
         if(confirm('Are you sure you want to delete this product?')) {
             if(type === 'bestSelling') {
                 websiteData.bestSellingProducts.splice(index, 1);
@@ -572,32 +632,32 @@
             saveData();
             renderProductsTable();
             showMessage('🗑️ Product deleted successfully!');
-            syncToLiveSite();
+            await syncToGitHub();  // গিটহাবে সিঙ্ক
         }
     }
 
-    function updateHeroSection() {
+    async function updateHeroSection() {
         websiteData.heroTitle = document.getElementById('heroTitle').value;
         websiteData.heroSubtitle = document.getElementById('heroSubtitle').value;
         saveData();
         showMessage('✅ Hero section updated successfully!');
-        syncToLiveSite();
+        await syncToGitHub();  // গিটহাবে সিঙ্ক
     }
 
-    function updateContactSettings() {
+    async function updateContactSettings() {
         websiteData.whatsappNumber = document.getElementById('whatsappNumber').value;
         websiteData.messengerUsername = document.getElementById('messengerUsername').value;
         saveData();
         showMessage('✅ Contact settings updated successfully!');
-        syncToLiveSite();
+        await syncToGitHub();  // গিটহাবে সিঙ্ক
     }
 
-    function updateFooterSettings() {
+    async function updateFooterSettings() {
         websiteData.copyrightText = document.getElementById('copyrightText').value;
         websiteData.supportNumber = document.getElementById('supportNumber').value;
         saveData();
         showMessage('✅ Footer updated successfully!');
-        syncToLiveSite();
+        await syncToGitHub();  // গিটহাবে সিঙ্ক
     }
 
     function backupData() {
@@ -618,7 +678,7 @@
         }
     }
 
-    function restoreFromFile() {
+    async function restoreFromFile() {
         const fileInput = document.getElementById('restoreFile');
         const file = fileInput.files[0];
         if(!file) {
@@ -627,7 +687,7 @@
         }
         
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = async function(e) {
             try {
                 const restored = JSON.parse(e.target.result);
                 websiteData = restored;
@@ -635,17 +695,12 @@
                 renderProductsTable();
                 loadSettingsToForm();
                 showMessage('✅ Data restored successfully!');
-                syncToLiveSite();
+                await syncToGitHub();  // গিটহাবে সিঙ্ক
             } catch(err) {
                 showMessage('❌ Invalid file!');
             }
         };
         reader.readAsText(file);
-    }
-
-    function syncToLiveSite() {
-        localStorage.setItem("ttm_live_website_data", JSON.stringify(websiteData));
-        showMessage('🌐 Data saved for live website! Changes will appear on refresh');
     }
 
     function escapeHtml(str) {
@@ -664,7 +719,7 @@
         msgDiv.classList.add('show');
         setTimeout(() => {
             msgDiv.classList.remove('show');
-        }, 3000);
+        }, 4000);
     }
 
     function showTab(tabName) {
