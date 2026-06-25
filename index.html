@@ -678,21 +678,21 @@
 
       <!-- ===== CARD 1 ===== -->
       <div class="card" onclick="showProduct(0)">
-        <img class="card-img" src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=500&h=500&fit=crop&crop=center" alt="Smart Power Combo">
+        <img class="card-img" src="https://i.ibb.co/hx9TptsT/Card-1.png" alt="Smart Power Combo">
         <div class="badge">⭐ Best Seller</div>
         <h2>Smart Power Combo</h2>
         <p>Vandes 10000mAh Power Bank, AirPods 2nd Generation এবং Portable Type-C Fan নিয়ে তৈরি একটি সম্পূর্ণ Daily Use Gadget Package।</p>
-        <div class="price">৳ 1499 <small>৳ 2499</small></div>
+        <div class="price">৳ 1370 <small>৳ 1650</small></div>
         <button class="btn">📦 বিস্তারিত দেখুন</button>
       </div>
 
-      <!-- ===== CARD 2 ===== -->
+      <!-- ===== CARD 2 (UPDATED: 20,000mAh) ===== -->
       <div class="card" onclick="showProduct(1)">
-        <img class="card-img" src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=500&h=500&fit=crop&crop=center" alt="Cooling Power Combo">
+        <img class="card-img" src="https://i.ibb.co/WNLSgdrM/Card-2.png" alt="Big Power Combo">
         <div class="badge premium">🔥 Premium Choice</div>
-        <h2>Cooling Power Combo</h2>
-        <p>10000mAh Battery, Turbo Fan এবং Portable Type-C Fan সহ গরমের দিনের জন্য একটি প্রয়োজনীয় কম্বো।</p>
-        <div class="price">৳ 1699 <small>৳ 2999</small></div>
+        <h2>Big Power Combo</h2>
+        <p>20,000mAh Power Bank, AirPods 2nd Generation এবং Portable Type-C Fan নিয়ে তৈরি একটি প্রিমিয়াম কম্বো প্যাকেজ।</p>
+        <div class="price">৳ 1770 <small>৳ 2100</small></div>
         <button class="btn">📦 বিস্তারিত দেখুন</button>
       </div>
 
@@ -702,11 +702,9 @@
     <div class="details" id="details">
       <div class="details-grid">
         <div class="image-section">
-          <img class="main-image" id="dimg" src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=500&h=500&fit=crop&crop=center" alt="Main Product Image">
+          <img class="main-image" id="dimg" src="https://i.ibb.co/qMwTNP83/Card-11.png" alt="Main Product Image">
           <div class="gallery" id="galleryContainer">
-            <img src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300&h=300&fit=crop&crop=center" alt="Gallery 1" onclick="changeMainImage(this.src)">
-            <img src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300&h=300&fit=crop&crop=center" alt="Gallery 2" onclick="changeMainImage(this.src)">
-            <img src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300&h=300&fit=crop&crop=center" alt="Gallery 3" onclick="changeMainImage(this.src)">
+            <!-- Gallery images will be dynamically populated from product data -->
           </div>
         </div>
         <div class="details-content">
@@ -795,18 +793,18 @@
     // 📦 Product Data
     // ============================================================
     const products = [{
-      name: "Smart Power Combo",
-      price: "৳ 1499",
+      name: "10,000mAh Power Bank + AirPods Pro + USB Portable Fan",
+      price: "৳ 1370",
       priceNum: 1499,
-      img: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=500&h=500&fit=crop&crop=center",
+      img: "https://i.ibb.co/hx9TptsT/Card-1.png",
       gallery: [
-        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300&h=300&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300&h=300&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300&h=300&fit=crop&crop=center"
+        "https://i.ibb.co/qMwTNP83/Card-11.png",
+        "https://i.ibb.co/7wfYJc4/card.png",
+        "https://i.ibb.co/sp2hRNGx/card.png"
       ],
       desc: "একটি স্মার্ট কম্বো প্যাকেজ যেখানে আপনি পাচ্ছেন প্রয়োজনীয় তিনটি গ্যাজেট। Daily use, travel এবং emergency ব্যবহারের জন্য উপযোগী।",
       features: [
-        "🔋 10000mAh হাই-ক্যাপাসিটি পাওয়ার ব্যাংক",
+        "🔋 10,000mAh হাই-ক্যাপাসিটি পাওয়ার ব্যাংক",
         "🎧 AirPods 2nd Generation (ট্রু ওয়্যারলেস)",
         "🌀 Portable Type-C Fan (সাইলেন্ট অপারেশন)",
         "📱 ইউনিভার্সাল কম্প্যাটিবিলিটি"
@@ -820,30 +818,30 @@
       ],
       why: "এই প্যাকেজটি আপনার দৈনন্দিন জীবনকে সহজ করবে। অফিস, ভ্রমণ বা জরুরি প্রয়োজনে পাওয়ার ব্যাংক ও এয়ারপডস আপনার সঙ্গী হবে। টাইপ-সি ফ্যান গরমের সময় আরাম দেবে।"
     }, {
-      name: "Cooling Power Combo",
-      price: "৳ 1699",
-      priceNum: 1699,
-      img: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=500&h=500&fit=crop&crop=center",
+      name: "20,000mAh Power Bank + AirPods Pro + USB Portable Fan",
+      price: "৳ 1770",
+      priceNum: 1770,
+      img: "https://i.ibb.co/WNLSgdrM/Card-2.png",
       gallery: [
-        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300&h=300&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300&h=300&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300&h=300&fit=crop&crop=center"
+        "https://i.ibb.co/b5s6d5nJ/Card-22.png",
+        "https://i.ibb.co/7wfYJc4/card.png",
+        "https://i.ibb.co/sp2hRNGx/card.png"
       ],
-      desc: "গরমের সময় আরাম ও প্রয়োজনীয় পাওয়ার সাপোর্টের জন্য তৈরি Premium Cooling Package।",
+      desc: "একটি প্রিমিয়াম কম্বো প্যাকেজ যেখানে আপনি পাচ্ছেন ২০ হাজার মিলি অ্যাম্পিয়ার পাওয়ার ব্যাংক, এয়ারপডস প্রো ও ইউএসবি পোর্টেবল ফ্যান। দীর্ঘ ভ্রমণ ও ভারী ব্যবহারের জন্য উপযোগী।",
       features: [
-        "🔋 10000mAh হাই-স্পিড চার্জিং ব্যাটারি",
-        "🌀 টার্বো ফ্যান (৩টি স্পিড মোড)",
-        "💨 Portable Type-C Fan (অ্যাডজাস্টেবল)",
-        "❄️ দ্রুত কুলিং প্রযুক্তি"
+        "🔋 20,000mAh হাই-ক্যাপাসিটি পাওয়ার ব্যাংক",
+        "🎧 AirPods 2nd Generation (ট্রু ওয়্যারলেস)",
+        "🌀 Portable Type-C Fan (সাইলেন্ট অপারেশন)",
+        "📱 ইউনিভার্সাল কম্প্যাটিবিলিটি"
       ],
       items: [
-        "10000mAh Battery Pack",
-        "Turbo Fan (3 Speed)",
+        "Vandes 20000mAh Power Bank",
+        "AirPods 2nd Generation",
         "Portable Type-C Fan",
         "Free Home Delivery",
-        "Easy Order System"
+        "Cash On Delivery"
       ],
-      why: "গ্রীষ্মের তীব্র গরমে এই কম্বো আপনার সেরা সঙ্গী। টার্বো ফ্যান ও পোর্টেবল ফ্যান দুইয়ের সমন্বয়ে আপনি ঘরে বা বাইরে থাকুন না কেন, ঠান্ডা থাকবেন। সাথে আছে পাওয়ার ব্যাকআপ।"
+      why: "এই প্যাকেজটি আপনার দৈনন্দিন জীবনকে সহজ করবে। অফিস, ভ্রমণ বা জরুরি প্রয়োজনে পাওয়ার ব্যাংক ও এয়ারপডস আপনার সঙ্গী হবে। টাইপ-সি ফ্যান গরমের সময় আরাম দেবে।"
     }];
 
     let selectedProduct = null;
@@ -862,9 +860,9 @@
     function changeMainImage(src) {
       document.getElementById('dimg').src = src;
       document.querySelectorAll('.gallery img').forEach(img => img.classList.remove('active'));
-      if (event && event.target) {
-        event.target.classList.add('active');
-      }
+      // Find the clicked image and add active class
+      const clickedImg = Array.from(document.querySelectorAll('.gallery img')).find(img => img.src === src);
+      if (clickedImg) clickedImg.classList.add('active');
     }
 
     // ============================================================
@@ -877,7 +875,8 @@
       const details = document.getElementById('details');
       details.style.display = 'block';
 
-      document.getElementById('dimg').src = p.img;
+      // Set main image to the first gallery image
+      document.getElementById('dimg').src = p.gallery[0];
 
       const galleryContainer = document.getElementById('galleryContainer');
       galleryContainer.innerHTML = '';
