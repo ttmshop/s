@@ -6,10 +6,13 @@
   <title>Premium Combo Offer</title>
   
   <!-- ============================================================
-  ⚠️ IMPORTANT: গুগল শিটস স্ক্রিপ্ট ইউআরএল
+  ⚠️ IMPORTANT: আপনার লিংক ও কনফিগারেশন সমূহ
   ============================================================ -->
   <script>
+    // আপনার Google Apps Script URL
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGOed4KNWghjvGd-fO1rD8L_aZ74gOGCF2NJT65zhmfD7kmh-9PUgeA8cXiU2b9E6f/exec";
+    
+    // আপনার ফেসবুক পিক্সেল আইডি
     const PIXEL_ID = '1049046654126060';
   </script>
 
@@ -27,6 +30,9 @@
     'https://connect.facebook.net/en_US/fbevents.js');
     
     fbq('init', PIXEL_ID);
+    
+    // 🚫 ফেসবুকের নিজস্ব অটোমেটিক বাটন ক্লিক ট্র্যাকিং (যেমন: Subscribe, Lead) বন্ধ করার কমান্ড
+    fbq('set', 'autoConfig', false, PIXEL_ID);
   </script>
 
   <!-- ============================================================
@@ -56,18 +62,17 @@
       };
 
       try {
-        // একই ডোমেইনের আপেক্ষিক পথ ব্যবহার করায় অ্যাড-ব্লকার এটি ব্লক করতে পারবে না
         fetch('/api/track', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
       } catch (e) {
-        console.error("CAPI error logic bypassed:", e);
+        console.error("CAPI error bypassed:", e);
       }
     }
 
-    // পেজ ভিউ ট্র্যাকিং রান করা
+    // ১. PageView ইভেন্ট পেজ লোড হওয়া মাত্রই ফায়ার হবে
     trackEvent('PageView');
   </script>
   
@@ -743,7 +748,7 @@
         <button class="btn">📦 বিস্তারিত দেখুন</button>
       </div>
 
-      <!-- ===== CARD 2  ===== -->
+      <!-- ===== CARD 2 ===== -->
       <div class="card" onclick="selectProduct(1)">
         <img class="card-img" src="https://i.ibb.co/WNLSgdrM/Card-2.png" alt="Big Power Combo">
         <div class="badge premium">🔥 Premium Choice</div>
@@ -846,6 +851,9 @@
   ⚡ JavaScript
   ============================================================ -->
   <script>
+    // ============================================================
+    // 📦 Product Data
+    // ============================================================
     const products = [{
       name: "10,000mAh Power Bank + AirPods Pro + USB Portable Fan",
       price: "৳ 1370",
@@ -884,7 +892,7 @@
       desc: "একটি প্রিমিয়াম কম্বো প্যাকেজ যেখানে আপনি পাচ্ছেন ২০ হাজার মিলি অ্যাম্পিয়ার পাওয়ার ব্যাংক, এয়ারপডস প্রো ও ইউএসবি পোর্টেবল ফ্যান। দীর্ঘ ভ্রমণ ও ভারী ব্যবহারের জন্য উপযোগী।",
       features: [
         "🔋 20,000mAh হাই-ক্যাপাসিটি পাওয়ার ব্যাংক",
-        "🎧 AirPods 2nd Generation (ট্রু ওয়্যারলেস)",
+        "🎧 AirPods 2nd Generation (ট্রু ওয়্যারлеস)",
         "🌀 Portable Type-C Fan (সাইলেন্ট অপারেশন)",
         "📱 ইউনিভার্সাল কম্প্যাটিবিলিটি"
       ],
@@ -901,27 +909,20 @@
     let selectedProduct = null;
     let isSubmitting = false;
 
-    // প্যাক সিলেক্ট করা এবং InitiateCheckout ইভেন্ট ফায়ার করা
-    function selectProduct(index) {
-      showProduct(index);
-      
-      // InitiateCheckout ইভেন্ট ট্র্যাক
-      trackEvent('InitiateCheckout', {
-        content_name: products[index].name,
-        value: products[index].priceNum,
-        currency: 'BDT'
-      });
-    }
-
-    // গ্যালারি ইমেজ পরিবর্তন
+    // ============================================================
+    // 🖼️ Gallery Functions
+    // ============================================================
     function changeMainImage(src) {
       document.getElementById('dimg').src = src;
       document.querySelectorAll('.gallery img').forEach(img => img.classList.remove('active'));
+      // Find the clicked image and add active class
       const clickedImg = Array.from(document.querySelectorAll('.gallery img')).find(img => img.src === src);
       if (clickedImg) clickedImg.classList.add('active');
     }
 
-    // প্রোডাক্ট ডিটেইলস দেখানো
+    // ============================================================
+    // 📦 Show Product Details
+    // ============================================================
     function showProduct(index) {
       const p = products[index];
       selectedProduct = p;
@@ -929,6 +930,7 @@
       const details = document.getElementById('details');
       details.style.display = 'block';
 
+      // Set main image to the first gallery image
       document.getElementById('dimg').src = p.gallery[0];
 
       const galleryContainer = document.getElementById('galleryContainer');
@@ -968,6 +970,24 @@
       details.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    // ============================================================
+    // 🛍️ Product Select Function
+    // ============================================================
+    function selectProduct(index) {
+      showProduct(index);
+      
+      // ২. InitiateCheckout ইভেন্ট ট্রিগার
+      trackEvent('InitiateCheckout', {
+        content_name: products[index].name,
+        value: products[index].priceNum,
+        currency: 'BDT',
+        content_type: 'product'
+      });
+    }
+
+    // ============================================================
+    // 🖥️ Modal Functions
+    // ============================================================
     function openForm() {
       if (!selectedProduct) {
         showToast('দয়া করে প্রথমে একটি প্যাকেজ নির্বাচন করুন।', 'error');
@@ -980,7 +1000,9 @@
       document.getElementById('modal').style.display = 'none';
     }
 
-    // অর্ডার সাবমিট করা
+    // ============================================================
+    // ⚡ Order Submit Function
+    // ============================================================
     function submitOrder() {
       if (isSubmitting) return;
       
@@ -988,6 +1010,7 @@
       const phone = document.getElementById('phone').value.trim();
       const address = document.getElementById('address').value.trim();
 
+      // দ্রুত ভ্যালিডেশন
       if (!name || !phone || !address) {
         showToast('সব তথ্য পূরণ করুন', 'error');
         return;
@@ -1002,7 +1025,7 @@
       submitBtn.textContent = '⏳';
       submitBtn.disabled = true;
 
-      // ১. সফলভাবে অর্ডারের জন্য Purchase ইভেন্ট ট্র্যাক করুন (নাম ও ফোন নাম্বার ডাটা সহ)
+      // ৩. সফলভাবে অর্ডারের জন্য Purchase ইভেন্ট ট্র্যাক করুন
       const purchaseData = {
         value: selectedProduct.priceNum,
         currency: 'BDT',
@@ -1017,7 +1040,7 @@
 
       trackEvent('Purchase', purchaseData, customerData);
 
-      // ২. থ্যাংক ইউ পেজ শো করা
+      // থ্যাংক ইউ পেজ শো করা
       document.getElementById('summaryProduct').textContent = selectedProduct.name + ' (' + selectedProduct.price + ')';
       document.getElementById('summaryName').textContent = name;
       document.getElementById('summaryPhone').textContent = phone;
@@ -1026,12 +1049,12 @@
       closeForm();
       document.getElementById('thankyouPage').style.display = 'flex';
 
-      // ফর্ম ক্লিয়ার করা
+      // ফর্ম রিসেট
       document.getElementById('name').value = '';
       document.getElementById('phone').value = '';
       document.getElementById('address').value = '';
 
-      // ৩. গুগল শিটে ডাটা পাঠানো (ব্যাকগ্রাউন্ডে)
+      // ডাটা গুগল শিটে পাঠানো (ব্যাকগ্রাউন্ডে)
       const payload = {
         timestamp: new Date().toISOString(),
         orderId: 'ORD-' + Date.now(),
@@ -1057,6 +1080,7 @@
         body: JSON.stringify(payload)
       }).catch(() => {});
 
+      // বাটন ও সাবমিট স্ট্যাটাস রিসেট
       setTimeout(() => {
         isSubmitting = false;
         submitBtn.textContent = '✅ অর্ডার কনফর্ম করুন';
@@ -1064,6 +1088,9 @@
       }, 300);
     }
 
+    // ============================================================
+    // 🔔 Toast Notification
+    // ============================================================
     function showToast(message, type = 'success') {
       const toast = document.getElementById('toast');
       toast.textContent = message;
@@ -1075,15 +1102,24 @@
       }, 2000);
     }
 
+    // ============================================================
+    // 🏠 Go Home
+    // ============================================================
     function goHome() {
       document.getElementById('thankyouPage').style.display = 'none';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // ============================================================
+    // 🖱️ Close modal on outside click
+    // ============================================================
     document.getElementById('modal').addEventListener('click', function(e) {
       if (e.target === this) closeForm();
     });
 
+    // ============================================================
+    // 🔑 Enter key support
+    // ============================================================
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && document.getElementById('modal').style.display === 'flex') {
         submitOrder();
