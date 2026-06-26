@@ -1,25 +1,6 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1049046654126060');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1049046654126060&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Premium Combo Offer</title>
@@ -32,6 +13,25 @@ src="https://www.facebook.com/tr?id=1049046654126060&ev=PageView&noscript=1"
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGOed4KNWghjvGd-fO1rD8L_aZ74gOGCF2NJT65zhmfD7kmh-9PUgeA8cXiU2b9E6f/exec";
   </script>
+
+  <!-- ============================================================
+  🎯 ফেসবুক পিক্সেল কোড (সব পৃষ্ঠায় ট্র্যাক করবে)
+  ============================================================ -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1049046654126060');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1049046654126060&ev=PageView&noscript=1"/>
+  </noscript>
   
   <style>
     /* ===== Reset & Base ===== */
@@ -695,8 +695,8 @@ src="https://www.facebook.com/tr?id=1049046654126060&ev=PageView&noscript=1"
     <!-- PRODUCT GRID -->
     <div class="products">
 
-      <!-- ===== CARD 1 ===== -->
-      <div class="card" onclick="showProduct(0)">
+      <!-- ===== CARD 1 (InitiateCheckout added) ===== -->
+      <div class="card" onclick="showProduct(0); fbq('track', 'InitiateCheckout');">
         <img class="card-img" src="https://i.ibb.co/hx9TptsT/Card-1.png" alt="Smart Power Combo">
         <div class="badge">⭐ Best Seller</div>
         <h2>Smart Power Combo</h2>
@@ -705,8 +705,8 @@ src="https://www.facebook.com/tr?id=1049046654126060&ev=PageView&noscript=1"
         <button class="btn">📦 বিস্তারিত দেখুন</button>
       </div>
 
-      <!-- ===== CARD 2 (UPDATED: 20,000mAh) ===== -->
-      <div class="card" onclick="showProduct(1)">
+      <!-- ===== CARD 2 (InitiateCheckout added) ===== -->
+      <div class="card" onclick="showProduct(1); fbq('track', 'InitiateCheckout');">
         <img class="card-img" src="https://i.ibb.co/WNLSgdrM/Card-2.png" alt="Big Power Combo">
         <div class="badge premium">🔥 Premium Choice</div>
         <h2>Big Power Combo</h2>
@@ -975,6 +975,14 @@ src="https://www.facebook.com/tr?id=1049046654126060&ev=PageView&noscript=1"
       const submitBtn = document.getElementById('submitOrderBtn');
       submitBtn.textContent = '⏳';
       submitBtn.disabled = true;
+
+      // ✅ Purchase ইভেন্ট ট্র্যাক করুন (অর্ডার কনফার্মেশনের সময়)
+      fbq('track', 'Purchase', {
+        value: selectedProduct.priceNum,
+        currency: 'BDT',
+        content_name: selectedProduct.name,
+        content_type: 'product'
+      });
 
       // ✅ থ্যাংক ইউ পেজ ইন্সট্যান্ট দেখান (কোনো লোডিং ছাড়া)
       document.getElementById('summaryProduct').textContent = selectedProduct.name + ' (' + selectedProduct.price + ')';
