@@ -51,7 +51,7 @@
       // ১. ব্রাউজার পিক্সেল ফায়ার করা
       fbq('track', eventName, eventData, { eventID: eventId });
 
-      // ২. ক্লাউডফ্লেয়ার ওয়ার্কারের মাধ্যমে সার্ভার পিক্সেল (CAPI) ফায়ার করা
+      // ২. ক্লাউডফ্লেয়ার পেজেস ফাংশনের মাধ্যমে সার্ভার পিক্সেল (CAPI) ফায়ার করা
       const payload = {
         eventName: eventName,
         eventId: eventId,
@@ -892,7 +892,7 @@
       desc: "একটি প্রিমিয়াম কম্বো প্যাকেজ যেখানে আপনি পাচ্ছেন ২০ হাজার মিলি অ্যাম্পিয়ার পাওয়ার ব্যাংক, এয়ারপডস প্রো ও ইউএসবি পোর্টেবল ফ্যান। দীর্ঘ ভ্রমণ ও ভারী ব্যবহারের জন্য উপযোগী।",
       features: [
         "🔋 20,000mAh হাই-ক্যাপাসিটি পাওয়ার ব্যাংক",
-        "🎧 AirPods 2nd Generation (ট্রু ওয়্যারлеস)",
+        "🎧 AirPods 2nd Generation (ট্রু ওয়্যারলেস)",
         "🌀 Portable Type-C Fan (সাইলেন্ট অপারেশন)",
         "📱 ইউনিভার্সাল কম্প্যাটিবিলিটি"
       ],
@@ -915,7 +915,6 @@
     function changeMainImage(src) {
       document.getElementById('dimg').src = src;
       document.querySelectorAll('.gallery img').forEach(img => img.classList.remove('active'));
-      // Find the clicked image and add active class
       const clickedImg = Array.from(document.querySelectorAll('.gallery img')).find(img => img.src === src);
       if (clickedImg) clickedImg.classList.add('active');
     }
@@ -930,7 +929,6 @@
       const details = document.getElementById('details');
       details.style.display = 'block';
 
-      // Set main image to the first gallery image
       document.getElementById('dimg').src = p.gallery[0];
 
       const galleryContainer = document.getElementById('galleryContainer');
@@ -1010,7 +1008,6 @@
       const phone = document.getElementById('phone').value.trim();
       const address = document.getElementById('address').value.trim();
 
-      // দ্রুত ভ্যালিডেশন
       if (!name || !phone || !address) {
         showToast('সব তথ্য পূরণ করুন', 'error');
         return;
