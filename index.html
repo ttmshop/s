@@ -9,11 +9,15 @@
   ⚠️ IMPORTANT: আপনার লিংক ও কনফিগারেশন সমূহ
   ============================================================ -->
   <script>
-    // আপনার Google Apps Script URL
+    // ১. আপনার Google Apps Script URL
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGOed4KNWghjvGd-fO1rD8L_aZ74gOGCF2NJT65zhmfD7kmh-9PUgeA8cXiU2b9E6f/exec";
     
-    // আপনার ফেসবুক পিক্সেল আইডি
+    // ২. আপনার ফেসবুক পিক্সেল আইডি
     const PIXEL_ID = '1049046654126060';
+
+    // 🔗 ৩. আপনার ক্লাউডফ্লেয়ার ওয়ার্কারের ফ্রি লিঙ্কটি নিচে বসান (শেষে কোন স্ল্যাশ / দিবেন না)
+    // উদাহরণ: "https://my-worker.myusername.workers.dev"
+    const WORKER_URL = "https://your-worker-subdomain.workers.dev";
   </script>
 
   <!-- ============================================================
@@ -31,7 +35,7 @@
     
     fbq('init', PIXEL_ID);
     
-    // 🚫 ফেসবুকের নিজস্ব অটোমেটিক বাটন ক্লিক ট্র্যাকিং (যেমন: Subscribe, Lead) বন্ধ করার কমান্ড
+    // 🚫 ফেসবুকের নিজস্ব অটোমেটিক বাটন ক্লিক ট্র্যাকিং (Subscribe, Lead ইত্যাদি) বন্ধ করার কমান্ড
     fbq('set', 'autoConfig', false, PIXEL_ID);
   </script>
 
@@ -51,7 +55,7 @@
       // ১. ব্রাউজার পিক্সেল ফায়ার করা
       fbq('track', eventName, eventData, { eventID: eventId });
 
-      // ২. ক্লাউডফ্লেয়ার পেজেস ফাংশনের মাধ্যমে সার্ভার পিক্সেল (CAPI) ফায়ার করা
+      // ২. সরাসরি ক্লাউডফ্লেয়ার ওয়ার্কার লিঙ্কে ডাটা পাঠানো (ডোমেইন ছাড়াই সার্ভার ট্র্যাকিং কাজ করবে)
       const payload = {
         eventName: eventName,
         eventId: eventId,
@@ -62,7 +66,7 @@
       };
 
       try {
-        fetch('/api/track', {
+        fetch(WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -72,7 +76,7 @@
       }
     }
 
-    // ১. PageView ইভেন্ট পেজ লোড হওয়া মাত্রই ফায়ার হবে
+    // PageView ইভেন্ট পেজ লোড হওয়া মাত্রই ফায়ার হবে
     trackEvent('PageView');
   </script>
   
