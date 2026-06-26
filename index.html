@@ -15,9 +15,10 @@
   </script>
 
   <!-- ============================================================
-  🎯 ফেসবুক পিক্সেল কোড (সব পৃষ্ঠায় ট্র্যাক করবে)
+  🎯 ফেসবুক পিক্সেল + কনভার্সন API (ব্রাউজার + সার্ভার সাইড)
   ============================================================ -->
   <script>
+    // ব্রাউজার পিক্সেল কোড
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -26,12 +27,77 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
+    
+    // পিক্সেল ইনিশিয়ালাইজ
     fbq('init', '1049046654126060');
     fbq('track', 'PageView');
+
+    // ============================================================
+    // 🔑 কনভার্সন API (CAPI) - টোকেন ও টেস্ট ইভেন্ট সহ
+    // ============================================================
+    const CAPI_CONFIG = {
+      pixelId: '1049046654126060',
+      accessToken: 'EAATWuZCfVON4BR54DwIyCmf4d8fSup5TmmJF3RZCYO5ZBWNnEmIqYVBfwZB3FgxZBR8KZBn3ZA01ZB6j9RKI7SIIYiVEI8c9jUBZB6WqCBPhC19RvhEVyYb3xmZAy0wU9QkZCGlmZCyIHZCPeM1dsRySZBh0wH4LvA8kZCGeWcIZAAyxZASNZAXtr57VrOs8TXmw0THZBRazQZDZD',
+      testEventCode: 'TEST57952'
+    };
+
+    // CAPI ইভেন্ট পাঠানোর ফাংশন
+    async function sendCAPIEvent(eventName, eventData = {}) {
+      const payload = {
+        data: [{
+          event_name: eventName,
+          event_time: Math.floor(Date.now() / 1000),
+          action_source: 'website',
+          event_source_url: window.location.href,
+          user_data: {
+            client_ip_address: '{{client.ip_address}}',
+            client_user_agent: navigator.userAgent
+          },
+          custom_data: eventData
+        }],
+        access_token: CAPI_CONFIG.accessToken,
+        test_event_code: CAPI_CONFIG.testEventCode
+      };
+
+      try {
+        const response = await fetch(
+          `https://graph.facebook.com/v18.0/${CAPI_CONFIG.pixelId}/events`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }
+        );
+        const result = await response.json();
+        console.log(`✅ CAPI ${eventName} পাঠানো হয়েছে:`, result);
+        return result;
+      } catch (error) {
+        console.error('❌ CAPI ত্রুটি:', error);
+      }
+    }
+
+    // ============================================================
+    // 🔄 ডুপ্লিকেট এড়ানোর জন্য ফাংশন
+    // ============================================================
+    function generateEventId() {
+      return Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // ============================================================
+    // 🎯 কাস্টম ট্র্যাকিং ফাংশন (পিক্সেল + CAPI একসাথে)
+    // ============================================================
+    function trackEvent(eventName, eventData = {}) {
+      // ১. ব্রাউজার পিক্সেল ট্র্যাক করুন
+      fbq('track', eventName, eventData);
+
+      // ২. CAPI-তে ইভেন্ট পাঠান (ব্যাকগ্রাউন্ডে)
+      const capiData = {
+        ...eventData,
+        event_id: generateEventId()
+      };
+      sendCAPIEvent(eventName, capiData);
+    }
   </script>
-  <noscript>
-    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1049046654126060&ev=PageView&noscript=1"/>
-  </noscript>
   
   <style>
     /* ===== Reset & Base ===== */
@@ -696,7 +762,7 @@
     <div class="products">
 
       <!-- ===== CARD 1 (InitiateCheckout added) ===== -->
-      <div class="card" onclick="showProduct(0); fbq('track', 'InitiateCheckout');">
+      <div class="card" onclick="showProduct(0); trackEvent('InitiateCheckout');">
         <img class="card-img" src="https://i.ibb.co/hx9TptsT/Card-1.png" alt="Smart Power Combo">
         <div class="badge">⭐ Best Seller</div>
         <h2>Smart Power Combo</h2>
@@ -706,7 +772,7 @@
       </div>
 
       <!-- ===== CARD 2 (InitiateCheckout added) ===== -->
-      <div class="card" onclick="showProduct(1); fbq('track', 'InitiateCheckout');">
+      <div class="card" onclick="showProduct(1); trackEvent('InitiateCheckout');">
         <img class="card-img" src="https://i.ibb.co/WNLSgdrM/Card-2.png" alt="Big Power Combo">
         <div class="badge premium">🔥 Premium Choice</div>
         <h2>Big Power Combo</h2>
@@ -976,13 +1042,15 @@
       submitBtn.textContent = '⏳';
       submitBtn.disabled = true;
 
-      // ✅ Purchase ইভেন্ট ট্র্যাক করুন (অর্ডার কনফার্মেশনের সময়)
-      fbq('track', 'Purchase', {
+      // ✅ Purchase ইভেন্ট ট্র্যাক করুন (পিক্সেল + CAPI একসাথে)
+      const purchaseData = {
         value: selectedProduct.priceNum,
         currency: 'BDT',
         content_name: selectedProduct.name,
-        content_type: 'product'
-      });
+        content_type: 'product',
+        order_id: generateOrderId()
+      };
+      trackEvent('Purchase', purchaseData);
 
       // ✅ থ্যাংক ইউ পেজ ইন্সট্যান্ট দেখান (কোনো লোডিং ছাড়া)
       document.getElementById('summaryProduct').textContent = selectedProduct.name + ' (' + selectedProduct.price + ')';
