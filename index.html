@@ -636,73 +636,26 @@
     .thankyou-card .order-detail .row:last-child {
       border-bottom: none;
     }
-    .thankyou-card .btn {
+    
+    /* কুইজ বাটন স্টাইলিং (উজ্জ্বল সবুজ ডিজাইন) */
+    .thankyou-card .quiz-btn {
       width: 100%;
       padding: 16px;
       border-radius: 40px;
-      background: #0f172a;
+      background: #0d9488;
+      color: #ffffff;
       font-size: 1.05rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
     }
-    .thankyou-card .btn:hover {
-      background: #1e293b;
-    }
-
-    /* ===== Responsive ===== */
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2rem;
-      }
-      .hero p {
-        font-size: 1rem;
-      }
-      .details-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-      }
-      .details {
-        padding: 24px 20px 32px;
-      }
-      .details-content ul {
-        grid-template-columns: 1fr;
-      }
-      .title {
-        font-size: 1.8rem;
-      }
-      .products {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-      .thankyou-card {
-        padding: 32px 20px 28px;
-      }
-      .thankyou-card .check {
-        width: 70px;
-        height: 70px;
-        line-height: 70px;
-        font-size: 3rem;
-      }
-      .card .card-img {
-        height: 220px;
-      }
-      .toast {
-        bottom: 20px;
-        padding: 14px 20px;
-        font-size: 0.9rem;
-        max-width: 95%;
-      }
-    }
-    @media (max-width: 480px) {
-      .top-offer {
-        font-size: 0.85rem;
-        padding: 12px 12px;
-      }
-      .trust-box span {
-        font-size: 0.8rem;
-        padding: 6px 14px;
-      }
-      .card .card-img {
-        height: 200px;
-      }
+    .thankyou-card .quiz-btn:hover {
+      background: #0f766e;
     }
   </style>
 </head>
@@ -847,7 +800,8 @@
         <div class="row"><strong>ঠিকানা:</strong> <span id="summaryAddress">-</span></div>
       </div>
 
-      <button class="btn" onclick="goHome()">🏠 হোম পেজে ফিরে যান</button>
+      <!-- 🔗 কুইজ বাটন (ক্লিক করলে নতুন ট্যাবে আপনার দেওয়া গুগল ফর্ম ওপেন হবে) -->
+      <button class="quiz-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSdACP-kzcE6LEhvvQVUkTqpYDvS7NcoHW9lucSZwJaS34Dh6g/viewform', '_blank')">🎁 আমাদের কুইজে অংশগ্রহণ করুন</button>
     </div>
   </div>
 
@@ -889,9 +843,9 @@
       priceNum: 1770,
       img: "https://i.ibb.co.com/pVvLNQz/Card-2.webp",
       gallery: [
-        "https://i.ibb.co.com/n83Z0cgD/Card-22.webp",
-        "https://i.ibb.co.com/qLq5xCZc/card.webp",
-        "https://i.ibb.co.com/C5GwmMvG/card.webp"
+        "https://i.ibb.co/n83Z0cgD/Card-22.webp",
+        "https://i.ibb.co/qLq5xCZc/card.webp",
+        "https://i.ibb.co/C5GwmMvG/card.webp"
       ],
       desc: "একটি প্রিমিয়াম কম্বো প্যাকেজ যেখানে আপনি পাচ্ছেন ২০ হাজার মিলি অ্যাম্পিয়ার পাওয়ার ব্যাংক, এয়ারপডস প্রো ও ইউএসবি পোর্টেবল ফ্যান। দীর্ঘ ভ্রমণ ও ভারী ব্যবহারের জন্য উপযোগী।",
       features: [
